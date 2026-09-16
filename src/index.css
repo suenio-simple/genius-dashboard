@@ -139,3 +139,65 @@ body {
 .badge-draft   { background: #e9ecef; color: #495057; }
 .badge-paused  { background: #fff3cd; color: #664d03; }
 .badge-closed  { background: #f8d7da; color: #842029; }
+/* ── Campaign filters ── */
+
+.campaign-filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.filter-input {
+  min-width: 260px;
+  flex: 1;
+  max-width: 420px;
+
+  padding: 9px 12px;
+
+  border: 1px solid var(--border);
+  border-radius: 6px;
+
+  background: var(--surface);
+  color: var(--text);
+
+  font: inherit;
+}
+
+.filter-input:focus {
+  outline: 2px solid rgba(13, 110, 253, 0.2);
+  border-color: var(--accent);
+}
+
+.filter-button {
+  padding: 9px 16px;
+
+  border: 0;
+  border-radius: 6px;
+
+  background: var(--accent);
+  color: #fff;
+
+  font: inherit;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.filter-button.secondary {
+  background: #e2e8f0;
+  color: var(--text);
+}
+
+@media (max-width: 600px) {
+
+  .campaign-filters {
+    flex-direction: column;
+  }
+
+  .filter-input {
+    min-width: 0;
+    max-width: none;
+    width: 100%;
+  }
+}

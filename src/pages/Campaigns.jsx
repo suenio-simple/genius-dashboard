@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { getCampaigns } from '../services/budgetManagerApi'
 
 const STATUS_BADGE = {
@@ -13,6 +13,9 @@ export default function Campaigns() {
   const [loading, setLoading]     = useState(true)
   const [error, setError]         = useState(null)
 
+  const [busquedaCliente, setBusquedaCliente] = useState('')
+  const [filtroCliente, setFiltroCliente] = useState('')
+
   useEffect(() => {
     getCampaigns()
       .then(setCampaigns)
@@ -20,34 +23,119 @@ export default function Campaigns() {
       .finally(() => setLoading(false))
   }, [])
 
-  if (loading) return <p className="state-msg">Cargando campañas...</p>
-  if (error)   return <p className="state-msg error">Error: {error.message}</p>
+  const campaignsFiltradas = useMemo(() => {
+    const texto = filtroCliente.trim().toLowerCase()
+
+    if (!texto) return campaigns
+
+    return campaigns.filter(campaign =>
+      campaign.client?.toLowerCase().includes(texto)
+    )
+  }, [campaigns, filtroCliente])
+
+  const buscarCliente = (event) => {
+    event.preventDefault()
+    setFiltroCliente(busquedaCliente)
+  }
+
+  const limpiarFiltro = () => {
+    setBusquedaCliente('')
+    setFiltroCliente('')
+  }
+
+  if (loading) {
+    return <p className="state-msg">Cargando campañas...</p>
+  }
+
+  if (error) {
+    return (
+      <p className="state-msg error">
+        Error: {error.message}
+      </p>
+    )
+  }
 
   return (
     <main className="page">
       <h1>Campañas</h1>
 
-      {/* TODO GD-F02: agregar filtro por estado y por cliente */}
-      {/* TODO GD-F05: selector de cliente */}
+      <form
+        className="campaign-filters"
+        onSubmit={buscarCliente}
+      >
+        <input
+          type="search"
+          className="filter-input"
+          placeholder="Buscar por cliente..."
+          value={busquedaCliente}
+          onChange={event =>
+            setBusquedaCliente(event.target.value)
+          }
+          aria-label="Buscar campañas por cliente"
+        />
+
+        <button
+          type="submit"
+          className="filter-button"
+        >
+          Buscar
+        </button>
+
+        {filtroCliente && (
+          <button
+            type="button"
+            className="filter-button secondary"
+            onClick={limpiarFiltro}
+          >
+            Limpiar
+          </button>
+        )}
+      </form>
 
       <div className="item-list">
-        {campaigns.length === 0 && <p className="state-msg">No hay campañas registradas.</p>}
-        {campaigns.map(c => (
-          <div key={c.id} className="item-card">
+
+        {campaignsFiltradas.length === 0 && (
+          <p className="state-msg">
+            {filtroCliente
+              ? `No se encontraron campañas para el cliente "${filtroCliente}".`
+              : 'No hay campañas registradas.'}
+          </p>
+        )}
+
+        {campaignsFiltradas.map(c => (
+          <div
+            key={c.id}
+            className="item-card"
+          >
             <div>
-              <div className="item-name">{c.name}</div>
-              <div className="item-meta">{c.client} · {c.type}</div>
+              <div className="item-name">
+                {c.name}
+              </div>
+
+              <div className="item-meta">
+                {c.client} · {c.type}
+              </div>
             </div>
+
             <div style={{ textAlign: 'right' }}>
-              <span className={`badge ${STATUS_BADGE[c.status] ?? 'badge-draft'}`}>
+              <span
+                className={`badge ${
+                  STATUS_BADGE[c.status] ?? 'badge-draft'
+                }`}
+              >
                 {c.status}
               </span>
-              <div className="item-meta" style={{ marginTop: 6 }}>
+
+              <div
+                className="item-meta"
+                style={{ marginTop: 6 }}
+              >
                 ${(c.budget ?? 0).toLocaleString()} presupuesto
               </div>
             </div>
           </div>
         ))}
+
       </div>
     </main>
   )
