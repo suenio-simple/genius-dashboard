@@ -59,84 +59,68 @@ export default function Campaigns() {
     <main className="page">
       <h1>Campañas</h1>
 
-      <form
-        className="campaign-filters"
-        onSubmit={buscarCliente}
-      >
-        <input
-          type="search"
-          className="filter-input"
-          placeholder="Buscar por cliente..."
-          value={busquedaCliente}
-          onChange={event =>
-            setBusquedaCliente(event.target.value)
-          }
-          aria-label="Buscar campañas por cliente"
-        />
+      <section className="campaign-actions">
+        <form className="campaign-filters" onSubmit={buscarCliente}>
+          <input
+            type="search"
+            className="filter-input"
+            placeholder="Buscar por cliente..."
+            value={busquedaCliente}
+            onChange={(event) => setBusquedaCliente(event.target.value)}
+            aria-label="Buscar campañas por cliente"
+          />
 
-        <button
-          type="submit"
-          className="filter-button"
-        >
-          Buscar
-        </button>
-
-        {filtroCliente && (
-          <button
-            type="button"
-            className="filter-button secondary"
-            onClick={limpiarFiltro}
-          >
-            Limpiar
+          <button type="submit" className="filter-button">
+            Buscar
           </button>
-        )}
-      </form>
+
+          {filtroCliente && (
+            <button
+              type="button"
+              className="filter-button secondary"
+              onClick={limpiarFiltro}
+            >
+              Limpiar
+            </button>
+          )}
+        </form>
+
+        <button className="filter-button">+ Agregar campaña</button>
+      </section>
 
       <div className="item-list">
-
         {campaignsFiltradas.length === 0 && (
           <p className="state-msg">
             {filtroCliente
               ? `No se encontraron campañas para el cliente "${filtroCliente}".`
-              : 'No hay campañas registradas.'}
+              : "No hay campañas registradas."}
           </p>
         )}
 
-        {campaignsFiltradas.map(c => (
-          <div
-            key={c.id}
-            className="item-card"
-          >
+        {campaignsFiltradas.map((c) => (
+          <div key={c.id} className="item-card">
             <div>
-              <div className="item-name">
-                {c.name}
-              </div>
+              <div className="item-name">{c.name}</div>
 
               <div className="item-meta">
                 {c.client} · {c.type}
               </div>
             </div>
 
-            <div style={{ textAlign: 'right' }}>
+            <div style={{ textAlign: "right" }}>
               <span
-                className={`badge ${
-                  STATUS_BADGE[c.status] ?? 'badge-draft'
-                }`}
+                className={`badge ${STATUS_BADGE[c.status] ?? "badge-draft"}`}
               >
                 {c.status}
               </span>
 
-              <div
-                className="item-meta"
-                style={{ marginTop: 6 }}
-              >
+              <div className="item-meta" style={{ marginTop: 6 }}>
                 ${(c.budget ?? 0).toLocaleString()} presupuesto
               </div>
             </div>
           </div>
         ))}
-
       </div>
     </main>
-  )
+  );
 }

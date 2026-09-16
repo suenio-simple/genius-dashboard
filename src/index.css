@@ -144,7 +144,6 @@ body {
 .campaign-filters {
   display: flex;
   gap: 10px;
-  margin-bottom: 20px;
   flex-wrap: wrap;
 }
 
@@ -188,6 +187,17 @@ body {
   background: #e2e8f0;
   color: var(--text);
 }
+
+/* ── Create campaigns ── */
+
+.campaign-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+/* ── Responsive ── */
 
 @media (max-width: 600px) {
 
