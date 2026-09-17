@@ -9,6 +9,13 @@ const STATUS_BADGE = {
   borrador: 'badge-draft',
 }
 
+const CAMPAIGN_STATUS = [
+  'draft',
+  'active',
+  'paused',
+  'completed'
+]
+
 export default function Campaigns() {
   const [campaigns, setCampaigns] = useState([])
   const [loading, setLoading]     = useState(true)
@@ -52,6 +59,23 @@ export default function Campaigns() {
 
   const agregarCampaign = (campaign) => {
     setCampaigns((actuales) => [...actuales, campaign])
+  }
+
+  const handleStatusChange = async (id, status) => {
+    try {
+      // Aquí podrías llamar a la API para actualizar el estado de la campaña en el backend
+      // await updateCampaign(id, { status })
+
+      setCampaigns(prev =>
+        prev.map(campaign =>
+          campaign.id === id
+            ? { ...campaign, status }
+            : campaign
+        )
+      )
+    } catch (error) {
+      console.error('Error al actualizar el estado:', error)
+    }
   }
 
   if (loading) {
@@ -124,12 +148,18 @@ export default function Campaigns() {
               </div>
             </div>
 
-            <div style={{ textAlign: "right" }}>
-              <span
-                className={`badge ${STATUS_BADGE[c.status] ?? "badge-draft"}`}
+            <div style={{ textAlign: 'right' }}>
+              <select
+                className={`badge ${STATUS_BADGE[c.status] ?? 'badge-draft'}`}
+                value={c.status}
+                onChange={e => handleStatusChange(c.id, e.target.value)}
               >
-                {c.status}
-              </span>
+                {CAMPAIGN_STATUS.map(status => (
+                  <option key={status} value={status}>
+                    {status}
+                  </option>
+                ))}
+              </select>
 
               <div className="item-meta" style={{ marginTop: 6 }}>
                 ${(c.budget ?? 0).toLocaleString()} presupuesto
