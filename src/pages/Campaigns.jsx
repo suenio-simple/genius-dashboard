@@ -50,6 +50,10 @@ export default function Campaigns() {
     setShowCreateCampaign(!showCreateCampaign);
   }
 
+  const agregarCampaign = (campaign) => {
+    setCampaigns((actuales) => [...actuales, campaign])
+  }
+
   if (loading) {
     return <p className="state-msg">Cargando campañas...</p>
   }
@@ -134,7 +138,12 @@ export default function Campaigns() {
         ))}
       </div>
 
-      {showCreateCampaign && <CreateCampaignForm toggleModal={toggleCreateCampaign} />}
+      {showCreateCampaign && (
+        <CreateCampaignForm
+          toggleModal={toggleCreateCampaign}
+          onCreated={agregarCampaign}
+        />
+      )}
     </main>
   );
 }
