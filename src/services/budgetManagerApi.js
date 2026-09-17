@@ -18,3 +18,18 @@ export async function getCampaignBudget(id) {
   if (!res.ok) throw new Error(`Budget Manager: ${res.status}`)
   return res.json()
 }
+export async function updateCampaignStatus(id, status) {
+  const res = await fetch(`${BASE}/campaigns/${id}/status`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ status }),
+  })
+
+  if (!res.ok) {
+    throw new Error(`Budget Manager: ${res.status}`)
+  }
+
+  return res.json()
+}
