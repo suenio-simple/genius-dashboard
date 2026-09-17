@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { getCampaigns } from '../services/budgetManagerApi'
+import CreateCampaignForm from '../components/CreateCampaignForm'
 
 const STATUS_BADGE = {
   activa:   'badge-active',
@@ -15,6 +16,8 @@ export default function Campaigns() {
 
   const [busquedaCliente, setBusquedaCliente] = useState('')
   const [filtroCliente, setFiltroCliente] = useState('')
+
+  const [showCreateCampaign, setShowCreateCampaign] = useState(false);
 
   useEffect(() => {
     getCampaigns()
@@ -41,6 +44,10 @@ export default function Campaigns() {
   const limpiarFiltro = () => {
     setBusquedaCliente('')
     setFiltroCliente('')
+  }
+
+  const toggleCreateCampaign = () => {
+    setShowCreateCampaign(!showCreateCampaign);
   }
 
   if (loading) {
@@ -85,7 +92,12 @@ export default function Campaigns() {
           )}
         </form>
 
-        <button className="filter-button">+ Agregar campaña</button>
+        <button 
+          className="filter-button"
+          onClick={toggleCreateCampaign}
+        >
+          + Agregar campaña
+        </button>
       </section>
 
       <div className="item-list">
@@ -121,6 +133,8 @@ export default function Campaigns() {
           </div>
         ))}
       </div>
+
+      {showCreateCampaign && <CreateCampaignForm toggleModal={toggleCreateCampaign} />}
     </main>
   );
 }
