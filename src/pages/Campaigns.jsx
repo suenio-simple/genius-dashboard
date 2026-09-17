@@ -46,7 +46,7 @@ export default function Campaigns() {
     setFiltroCliente('')
   }
 
-  const toggleCreateCampaign = () => {
+  const toggleModal = () => {
     setShowCreateCampaign(!showCreateCampaign);
   }
 
@@ -98,7 +98,7 @@ export default function Campaigns() {
 
         <button 
           className="filter-button"
-          onClick={toggleCreateCampaign}
+          onClick={toggleModal}
         >
           + Agregar campaña
         </button>
@@ -113,8 +113,9 @@ export default function Campaigns() {
           </p>
         )}
 
-        {campaignsFiltradas.map((c) => (
-          <div key={c.id} className="item-card">
+        {/* el id no es confiable como key: el backend puede repetirlo */}
+        {campaignsFiltradas.map((c, indice) => (
+          <div key={`${c.id}-${indice}`} className="item-card">
             <div>
               <div className="item-name">{c.name}</div>
 
@@ -140,7 +141,7 @@ export default function Campaigns() {
 
       {showCreateCampaign && (
         <CreateCampaignForm
-          toggleModal={toggleCreateCampaign}
+          toggleModal={toggleModal}
           onCreated={agregarCampaign}
         />
       )}
