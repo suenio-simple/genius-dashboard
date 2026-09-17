@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { createCampaign } from '../services/budgetManagerApi'
 
 const CURRENCY = 'ARS'
 
@@ -36,7 +37,6 @@ const validar = (form) => {
 
   if (!form.startDate) errores.startDate = 'Ingresá la fecha de inicio.'
   if (!form.endDate) errores.endDate = 'Ingresá la fecha de fin.'
-  if (form.endDate > form.startDate) errores.endDate = 'La fecha de fin no puede ser posterior a la de inicio.'
 
   if (form.startDate && form.endDate && form.endDate < form.startDate) {
     errores.endDate = 'La fecha de fin no puede ser anterior a la de inicio.'
@@ -70,7 +70,7 @@ const CreateCampaignForm = ({ toggleModal, onCreated }) => {
     setEnviando(true)
 
     try {
-      console.log({
+      const campaign = await createCampaign({
         name:      form.name.trim(),
         client:    form.client.trim(),
         type:      form.type.trim(),
@@ -81,7 +81,7 @@ const CreateCampaignForm = ({ toggleModal, onCreated }) => {
         endDate:   form.endDate,
       })
 
-      // onCreated?.(campaign)
+      onCreated?.(campaign)
       toggleModal()
     } catch (error) {
       setErrorApi(error.message)
