@@ -23,3 +23,5 @@ yarn-error.log*
 
 # Internal docs — not for the repo
 requerimientos.html
+
+.atl/

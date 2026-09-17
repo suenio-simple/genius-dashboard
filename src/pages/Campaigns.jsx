@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { getCampaigns } from '../services/budgetManagerApi'
 
 const STATUS_BADGE = {
@@ -23,31 +23,31 @@ export default function Campaigns() {
   const [busquedaCliente, setBusquedaCliente] = useState('')
   const [filtroCliente, setFiltroCliente] = useState('')
 
-  useEffect(() => {
-    getCampaigns()
+  const fetchCampaigns = (client) => {
+    setLoading(true)
+    setError(null)
+
+    getCampaigns(client ? { client } : {})
       .then(setCampaigns)
       .catch(setError)
       .finally(() => setLoading(false))
+  }
+
+  useEffect(() => {
+    fetchCampaigns()
   }, [])
-
-  const campaignsFiltradas = useMemo(() => {
-    const texto = filtroCliente.trim().toLowerCase()
-
-    if (!texto) return campaigns
-
-    return campaigns.filter(campaign =>
-      campaign.client?.toLowerCase().includes(texto)
-    )
-  }, [campaigns, filtroCliente])
 
   const buscarCliente = (event) => {
     event.preventDefault()
-    setFiltroCliente(busquedaCliente)
+    const texto = busquedaCliente.trim()
+    setFiltroCliente(texto)
+    fetchCampaigns(texto)
   }
 
   const limpiarFiltro = () => {
     setBusquedaCliente('')
     setFiltroCliente('')
+    fetchCampaigns()
   }
 
   const handleStatusChange = async (id, status) => {
@@ -118,7 +118,7 @@ export default function Campaigns() {
 
       <div className="item-list">
 
-        {campaignsFiltradas.length === 0 && (
+        {campaigns.length === 0 && (
           <p className="state-msg">
             {filtroCliente
               ? `No se encontraron campañas para el cliente "${filtroCliente}".`
@@ -126,7 +126,7 @@ export default function Campaigns() {
           </p>
         )}
 
-        {campaignsFiltradas.map(c => (
+        {campaigns.map(c => (
           <div
             key={c.id}
             className="item-card"
