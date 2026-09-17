@@ -1,25 +1,27 @@
 import { useEffect, useMemo, useState } from 'react'
-import { getCampaigns } from '../services/budgetManagerApi'
+import {
+  getCampaigns,
+  updateCampaignStatus,
+} from '../services/budgetManagerApi'
 import CreateCampaignForm from '../components/CreateCampaignForm'
 
 const STATUS_BADGE = {
-  activa:   'badge-active',
-  pausada:  'badge-paused',
-  cerrada:  'badge-closed',
-  borrador: 'badge-draft',
+  active: 'badge-active',
+  paused: 'badge-paused',
+  completed: 'badge-closed',
+  draft: 'badge-draft',
 }
 
 const CAMPAIGN_STATUS = [
   'draft',
   'active',
   'paused',
-  'completed'
+  'closed',
 ]
-
 export default function Campaigns() {
   const [campaigns, setCampaigns] = useState([])
-  const [loading, setLoading]     = useState(true)
-  const [error, setError]         = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   const [busquedaCliente, setBusquedaCliente] = useState('')
   const [filtroCliente, setFiltroCliente] = useState('')
@@ -43,7 +45,7 @@ export default function Campaigns() {
     )
   }, [campaigns, filtroCliente])
 
-  const buscarCliente = (event) => {
+  const buscarCliente = event => {
     event.preventDefault()
     setFiltroCliente(busquedaCliente)
   }
@@ -63,8 +65,7 @@ export default function Campaigns() {
 
   const handleStatusChange = async (id, status) => {
     try {
-      // Aquí podrías llamar a la API para actualizar el estado de la campaña en el backend
-      // await updateCampaign(id, { status })
+      await updateCampaignStatus(id, status)
 
       setCampaigns(prev =>
         prev.map(campaign =>
@@ -73,13 +74,18 @@ export default function Campaigns() {
             : campaign
         )
       )
-    } catch (error) {
-      console.error('Error al actualizar el estado:', error)
+    } catch (err) {
+      console.error('Error al actualizar el estado:', err)
+      setError(err)
     }
   }
 
   if (loading) {
-    return <p className="state-msg">Cargando campañas...</p>
+    return (
+      <p className="state-msg">
+        Cargando campañas...
+      </p>
+    )
   }
 
   if (error) {
@@ -150,19 +156,34 @@ export default function Campaigns() {
 
             <div style={{ textAlign: 'right' }}>
               <select
-                className={`badge ${STATUS_BADGE[c.status] ?? 'badge-draft'}`}
+                className={`badge ${
+                  STATUS_BADGE[c.status] ?? 'badge-draft'
+                }`}
                 value={c.status}
-                onChange={e => handleStatusChange(c.id, e.target.value)}
+                onChange={event =>
+                  handleStatusChange(
+                    c.id,
+                    event.target.value
+                  )
+                }
               >
                 {CAMPAIGN_STATUS.map(status => (
-                  <option key={status} value={status}>
+                  <option
+                    key={status}
+                    value={status}
+                  >
                     {status}
                   </option>
                 ))}
               </select>
 
-              <div className="item-meta" style={{ marginTop: 6 }}>
-                ${(c.budget ?? 0).toLocaleString()} presupuesto
+              <div
+                className="item-meta"
+                style={{ marginTop: 6 }}
+              >
+                $
+                {(c.budget ?? 0).toLocaleString()}{' '}
+                presupuesto
               </div>
             </div>
           </div>
