@@ -3,6 +3,7 @@ import {
   getCampaigns,
   updateCampaignStatus,
 } from '../services/budgetManagerApi'
+import CreateCampaignForm from '../components/CreateCampaignForm'
 
 const STATUS_BADGE = {
   active: 'badge-active',
@@ -24,6 +25,8 @@ export default function Campaigns() {
 
   const [busquedaCliente, setBusquedaCliente] = useState('')
   const [filtroCliente, setFiltroCliente] = useState('')
+
+  const [showCreateCampaign, setShowCreateCampaign] = useState(false);
 
   useEffect(() => {
     getCampaigns()
@@ -50,6 +53,14 @@ export default function Campaigns() {
   const limpiarFiltro = () => {
     setBusquedaCliente('')
     setFiltroCliente('')
+  }
+
+  const toggleModal = () => {
+    setShowCreateCampaign(!showCreateCampaign);
+  }
+
+  const agregarCampaign = (campaign) => {
+    setCampaigns((actuales) => [...actuales, campaign])
   }
 
   const handleStatusChange = async (id, status) => {
@@ -89,57 +100,54 @@ export default function Campaigns() {
     <main className="page">
       <h1>Campañas</h1>
 
-      <form
-        className="campaign-filters"
-        onSubmit={buscarCliente}
-      >
-        <input
-          type="search"
-          className="filter-input"
-          placeholder="Buscar por cliente..."
-          value={busquedaCliente}
-          onChange={event =>
-            setBusquedaCliente(event.target.value)
-          }
-          aria-label="Buscar campañas por cliente"
-        />
+      <section className="campaign-actions">
+        <form className="campaign-filters" onSubmit={buscarCliente}>
+          <input
+            type="search"
+            className="filter-input"
+            placeholder="Buscar por cliente..."
+            value={busquedaCliente}
+            onChange={(event) => setBusquedaCliente(event.target.value)}
+            aria-label="Buscar campañas por cliente"
+          />
 
-        <button
-          type="submit"
-          className="filter-button"
-        >
-          Buscar
-        </button>
-
-        {filtroCliente && (
-          <button
-            type="button"
-            className="filter-button secondary"
-            onClick={limpiarFiltro}
-          >
-            Limpiar
+          <button type="submit" className="filter-button">
+            Buscar
           </button>
-        )}
-      </form>
+
+          {filtroCliente && (
+            <button
+              type="button"
+              className="filter-button secondary"
+              onClick={limpiarFiltro}
+            >
+              Limpiar
+            </button>
+          )}
+        </form>
+
+        <button 
+          className="filter-button"
+          onClick={toggleModal}
+        >
+          + Agregar campaña
+        </button>
+      </section>
 
       <div className="item-list">
         {campaignsFiltradas.length === 0 && (
           <p className="state-msg">
             {filtroCliente
               ? `No se encontraron campañas para el cliente "${filtroCliente}".`
-              : 'No hay campañas registradas.'}
+              : "No hay campañas registradas."}
           </p>
         )}
 
-        {campaignsFiltradas.map(c => (
-          <div
-            key={c.id}
-            className="item-card"
-          >
+        {/* el id no es confiable como key: el backend puede repetirlo */}
+        {campaignsFiltradas.map((c, indice) => (
+          <div key={`${c.id}-${indice}`} className="item-card">
             <div>
-              <div className="item-name">
-                {c.name}
-              </div>
+              <div className="item-name">{c.name}</div>
 
               <div className="item-meta">
                 {c.client} · {c.type}
@@ -181,6 +189,13 @@ export default function Campaigns() {
           </div>
         ))}
       </div>
+
+      {showCreateCampaign && (
+        <CreateCampaignForm
+          toggleModal={toggleModal}
+          onCreated={agregarCampaign}
+        />
+      )}
     </main>
-  )
+  );
 }
