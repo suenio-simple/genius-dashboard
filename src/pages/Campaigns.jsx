@@ -18,6 +18,7 @@ const CAMPAIGN_STATUS = [
   'paused',
   'closed',
 ]
+
 export default function Campaigns() {
   const [campaigns, setCampaigns] = useState([])
   const [loading, setLoading] = useState(true)
@@ -35,24 +36,48 @@ export default function Campaigns() {
       .finally(() => setLoading(false))
   }, [])
 
-  const campaignsFiltradas = useMemo(() => {
-    const texto = filtroCliente.trim().toLowerCase()
+  // const campaignsFiltradas = useMemo(() => {
+  //   const texto = filtroCliente.trim().toLowerCase()
 
-    if (!texto) return campaigns
+  //   if (!texto) return campaigns
 
-    return campaigns.filter(campaign =>
-      campaign.client?.toLowerCase().includes(texto)
-    )
-  }, [campaigns, filtroCliente])
+  //   return campaigns.filter(campaign =>
+  //     campaign.client?.toLowerCase().includes(texto)
+  //   )
+  // }, [campaigns, filtroCliente])
 
-  const buscarCliente = event => {
+  const buscarCliente = async (event) => {
     event.preventDefault()
-    setFiltroCliente(busquedaCliente)
+    try {
+      setLoading(true)
+      setError(null)
+
+      const resultados = await getCampaigns({
+        client: busquedaCliente.trim(),
+      })
+
+      setCampaigns(resultados)
+      setFiltroCliente(busquedaCliente)
+    } catch (err) {
+      setError(err)
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const limpiarFiltro = () => {
+  const limpiarFiltro = async () => {
     setBusquedaCliente('')
     setFiltroCliente('')
+    setLoading(true)
+
+    try {
+      const resultados = await getCampaigns()
+      setCampaigns(resultados)
+    } catch (err) {
+      setError(err)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const toggleModal = () => {
@@ -126,7 +151,7 @@ export default function Campaigns() {
           )}
         </form>
 
-        <button 
+        <button
           className="filter-button"
           onClick={toggleModal}
         >
@@ -135,7 +160,7 @@ export default function Campaigns() {
       </section>
 
       <div className="item-list">
-        {campaignsFiltradas.length === 0 && (
+        {campaigns.length === 0 && (
           <p className="state-msg">
             {filtroCliente
               ? `No se encontraron campañas para el cliente "${filtroCliente}".`
@@ -144,7 +169,7 @@ export default function Campaigns() {
         )}
 
         {/* el id no es confiable como key: el backend puede repetirlo */}
-        {campaignsFiltradas.map((c, indice) => (
+        {campaigns.map((c, indice) => (
           <div key={`${c.id}-${indice}`} className="item-card">
             <div>
               <div className="item-name">{c.name}</div>
@@ -156,9 +181,8 @@ export default function Campaigns() {
 
             <div style={{ textAlign: 'right' }}>
               <select
-                className={`badge ${
-                  STATUS_BADGE[c.status] ?? 'badge-draft'
-                }`}
+                className={`badge ${STATUS_BADGE[c.status] ?? 'badge-draft'
+                  }`}
                 value={c.status}
                 onChange={event =>
                   handleStatusChange(
