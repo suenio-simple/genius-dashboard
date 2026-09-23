@@ -1,0 +1,198 @@
+/* ── KPI card grid ── */
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.kpi-card {
+  background: var(--surface);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.kpi-card .kpi-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.kpi-card .kpi-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* ── Campaign filters ── */
+
+.campaign-filters {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.filter-input {
+  min-width: 260px;
+  flex: 1;
+  max-width: 420px;
+
+  padding: 9px 12px;
+
+  border: 1px solid var(--border);
+  border-radius: 6px;
+
+  background: var(--surface);
+  color: var(--text);
+
+  font: inherit;
+}
+
+.filter-input:focus {
+  outline: 2px solid rgba(13, 110, 253, 0.2);
+  border-color: var(--accent);
+}
+
+.filter-button {
+  padding: 9px 16px;
+
+  border: 0;
+  border-radius: 6px;
+
+  background: var(--accent);
+  color: #fff;
+
+  font: inherit;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.filter-button.secondary {
+  background: #e2e8f0;
+  color: var(--text);
+}
+
+/* ── Create campaigns ── */
+
+.campaign-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.create-campaign-modal {
+  position: fixed;
+  z-index: 20;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: min(560px, calc(100dvw - 32px));
+  max-height: calc(100dvh - 48px);
+  overflow-y: auto;
+
+  background-color: var(--surface);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+}
+
+.create-campaign-modal h2 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 18px;
+  margin-top: 0;
+}
+
+/* ── Campaign form ── */
+
+.campaign-form { display: flex; flex-direction: column; gap: 14px; }
+
+.form-row { display: flex; gap: 14px; }
+
+.form-field { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 0; }
+
+.form-field label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.form-field input,
+.form-field select {
+  width: 100%;
+  padding: 9px 12px;
+
+  border: 1px solid var(--border);
+  border-radius: 6px;
+
+  background: var(--surface);
+  color: var(--text);
+
+  font: inherit;
+}
+
+.form-field input:focus,
+.form-field select:focus {
+  outline: 2px solid rgba(13, 110, 253, 0.2);
+  border-color: var(--accent);
+}
+
+.form-field input[readonly] {
+  background: var(--bg);
+  color: var(--muted);
+  cursor: default;
+}
+
+.form-error { font-size: 0.78rem; color: #dc3545; }
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.form-actions button:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  width: 100dvw;
+  height: 100dvh;
+
+  background-color: rgba(0, 0, 0, .3);
+}
+
+/* ── Responsive ── */
+
+@media (max-width: 600px) {
+
+  .campaign-filters {
+    flex-direction: column;
+  }
+
+  .filter-input {
+    min-width: 0;
+    max-width: none;
+    width: 100%;
+  }
+
+  .campaign-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+}

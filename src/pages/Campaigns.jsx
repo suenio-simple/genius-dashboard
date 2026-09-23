@@ -1,3 +1,5 @@
+import '../styles/campaigns.css'
+
 import { useEffect, useMemo, useState } from 'react'
 import {
   getCampaigns,
@@ -35,16 +37,6 @@ export default function Campaigns() {
       .catch(setError)
       .finally(() => setLoading(false))
   }, [])
-
-  // const campaignsFiltradas = useMemo(() => {
-  //   const texto = filtroCliente.trim().toLowerCase()
-
-  //   if (!texto) return campaigns
-
-  //   return campaigns.filter(campaign =>
-  //     campaign.client?.toLowerCase().includes(texto)
-  //   )
-  // }, [campaigns, filtroCliente])
 
   const buscarCliente = async (event) => {
     event.preventDefault()
