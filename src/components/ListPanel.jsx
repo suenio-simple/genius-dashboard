@@ -1,10 +1,10 @@
 import { Children } from 'react'
 
-export function ListPanel({ icon: Icon, title, meta, emptyMessage, children }) {
+export function ListPanel({ icon: Icon, title, meta, emptyMessage, className = '', children }) {
   const isEmpty = Children.count(children) === 0
 
   return (
-    <section className="bg-surface rounded-xl border border-border overflow-hidden shadow-sm mb-7">
+    <section className={`bg-surface rounded-xl border border-border overflow-hidden shadow-sm ${className}`}>
       <div className="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between gap-3 bg-slate-50/50">
         <div className="flex items-center gap-2">
           <Icon className="text-slate-700" size={18} aria-hidden="true" />

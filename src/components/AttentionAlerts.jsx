@@ -70,6 +70,7 @@ export default function AttentionAlerts({ alerts, currency, onSelect }) {
       title="Requiere tu atención"
       meta={`${alerts.length} ${alerts.length === 1 ? 'alerta' : 'alertas'}`}
       emptyMessage="Todo en orden: ninguna campaña activa necesita ajustes."
+      className="mb-7"
     >
       {alerts.map((alert) => {
         const { Icon, label, iconBox, badge } = ALERT_STYLES[alert.type]

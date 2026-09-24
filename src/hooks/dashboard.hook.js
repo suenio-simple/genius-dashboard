@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { campaigns, campaignsSummary, leadsSummary } from '../mocks/dashboardSummary'
+import { campaigns, campaignsSummary, landings, leadsSummary } from '../mocks/dashboardSummary'
 
 // Umbrales de las alertas de pacing y presupuesto
 const NEAR_LIMIT_PERCENT = 90 // % consumido a partir del cual avisamos que se está por agotar
@@ -64,6 +64,7 @@ export function useDashboard() {
       spentPercent: totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0,
       activeCampaigns: activeCampaignList.length,
       activeCampaignList,
+      activeLandingList: landings.filter((l) => l.status === 'active'),
       registeredCampaigns,
       totalLeads,
       alerts: buildAlerts(Date.now()),

@@ -25,13 +25,54 @@ export const campaignsSummary = [
   { campaignId: 8, campaignName: 'Hot Sale 2026',               client: 'SuenoSimple', totalBudget: 80000,  spent: 0,      remaining: 80000,  percentageUsed: 0 },
 ]
 
-// GET /api/crm/landings/summary
-export const leadsSummary = [
-  { id: 1, name: 'Email Recupero de Carritos - SuenoSimple',  client: 'SuenoSimple', status: 'active', leadCount: 285 },
-  { id: 2, name: 'Google Ads Conversión - FinanzasYa',        client: 'FinanzasYa',  status: 'active', leadCount: 580 },
-  { id: 3, name: 'Search Black Friday - TechStore',           client: 'TechStore',   status: 'active', leadCount: 412 },
-  { id: 4, name: 'Lanzamiento Colección Otoño - ModaExpress', client: 'ModaExpress', status: 'active', leadCount: 320 },
-  { id: 5, name: 'Reactivación Clientes VIP - AutoSur',       client: 'AutoSur',     status: 'active', leadCount: 0 },
-  { id: 6, name: 'Brand Awareness Q1 - BioSalud',             client: 'BioSalud',    status: 'active', leadCount: 245 },
-  { id: 7, name: 'Hot Sale 2026 - SuenoSimple',               client: 'SuenoSimple', status: 'draft',  leadCount: 0 },
+// GET /api/crm/landings
+export const landings = [
+  landing(1, 1, 'Hot Sale 2026 - SuenoSimple', 'SuenoSimple', 'active', 0, '2026-04-01T10:00:00.000Z', {
+    title: 'Hot Sale 2026', subtitle: 'Hasta 50% off en colchones', ctaText: 'Ver ofertas',
+    ctaUrl: 'https://suenosimple.com/hot-sale', eventDate: '2026-05-20',
+  }),
+  landing(2, 2, 'Email Recupero de Carritos - SuenoSimple', 'SuenoSimple', 'active', 285, '2026-07-25T10:00:00.000Z', {
+    title: 'Tu carrito te espera', subtitle: 'Terminá tu compra con envío gratis', ctaText: 'Volver al carrito',
+    ctaUrl: 'https://suenosimple.com/carrito', eventDate: '2026-08-01',
+  }),
+  landing(3, 1, 'Google Ads Conversión - FinanzasYa', 'FinanzasYa', 'active', 580, '2026-08-25T10:00:00.000Z', {
+    title: 'Tu préstamo en 24 hs', subtitle: 'Simulá tu cuota sin compromiso', ctaText: 'Simular préstamo',
+    ctaUrl: 'https://finanzasya.com/prestamos', eventDate: '2026-09-01',
+  }),
+  landing(4, 1, 'Search Black Friday - TechStore', 'TechStore', 'active', 412, '2026-09-05T10:00:00.000Z', {
+    title: 'Black Friday TechStore', subtitle: 'Notebooks y celulares con hasta 40% off', ctaText: 'Ver ofertas',
+    ctaUrl: 'https://techstore.com/black-friday', eventDate: '2026-09-10',
+  }),
+  landing(5, 3, 'Lanzamiento Colección Otoño - ModaExpress', 'ModaExpress', 'active', 320, '2026-09-10T10:00:00.000Z', {
+    title: 'Nueva colección otoño', subtitle: 'Descubrí las tendencias de la temporada', ctaText: 'Ver colección',
+    ctaUrl: 'https://modaexpress.com/otono', eventDate: '2026-09-18',
+  }),
+  landing(6, 2, 'Reactivación Clientes VIP - AutoSur', 'AutoSur', 'active', 0, '2026-08-28T10:00:00.000Z', {
+    title: 'Beneficios exclusivos VIP', subtitle: 'Service con 30% off para clientes VIP', ctaText: 'Reservar turno',
+    ctaUrl: 'https://autosur.com/vip', eventDate: '2026-09-01',
+  }),
+  landing(7, 3, 'Brand Awareness Q1 - BioSalud', 'BioSalud', 'active', 245, '2026-08-10T10:00:00.000Z', {
+    title: 'Cuidate con BioSalud', subtitle: 'Planes de salud para toda la familia', ctaText: 'Conocer planes',
+    ctaUrl: 'https://biosalud.com/planes', eventDate: '2026-08-15',
+  }),
+  landing(8, 1, 'Black Friday 2025 - SuenoSimple', 'SuenoSimple', 'inactive', 0, '2025-10-20T10:00:00.000Z', {
+    title: 'Black Friday 2025', subtitle: 'Colchones con hasta 60% off', ctaText: 'Ver ofertas',
+    ctaUrl: 'https://suenosimple.com/black-friday', eventDate: '2025-11-01',
+  }),
 ]
+
+function landing(id, templateId, name, client, status, leadCount, createdAt, fields) {
+  return {
+    id,
+    templateId,
+    name,
+    client,
+    status,
+    fields: { ...fields, heroImageUrl: 'https://via.placeholder.com/1200x400' },
+    createdAt,
+    leadCount,
+  }
+}
+
+// GET /api/crm/landings/summary (se arma desde landings para que ambos mocks coincidan)
+export const leadsSummary = landings.map(({ id, name, client, status, leadCount }) => ({ id, name, client, status, leadCount }))

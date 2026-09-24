@@ -1,4 +1,5 @@
 import ActiveCampaigns from '../components/ActiveCampaigns'
+import ActiveLandings from '../components/ActiveLandings'
 import AttentionAlerts from '../components/AttentionAlerts'
 import KpiCard from '../components/KpiCard'
 import { useDashboard } from '../hooks/dashboard.hook'
@@ -13,6 +14,7 @@ export default function Dashboard() {
     spentPercent,
     activeCampaigns,
     activeCampaignList,
+    activeLandingList,
     registeredCampaigns,
     totalLeads,
     alerts,
@@ -77,7 +79,11 @@ export default function Dashboard() {
 
       <AttentionAlerts alerts={alerts} currency={currency} />
 
-      <ActiveCampaigns campaigns={activeCampaignList} />
+      {/* Lado a lado en pantallas grandes, una debajo de la otra en chicas */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-7 items-start mb-7">
+        <ActiveCampaigns campaigns={activeCampaignList} />
+        <ActiveLandings landings={activeLandingList} />
+      </div>
 
       {/* TODO GD-F05: agregar selector de cliente para filtrar la vista */}
     </main>
