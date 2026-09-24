@@ -76,3 +76,30 @@ function landing(id, templateId, name, client, status, leadCount, createdAt, fie
 
 // GET /api/crm/landings/summary (se arma desde landings para que ambos mocks coincidan)
 export const leadsSummary = landings.map(({ id, name, client, status, leadCount }) => ({ id, name, client, status, leadCount }))
+
+// GET /api/crm/landings/{id}/leads — se generan tantos leads como indica leadCount de cada landing
+const FIRST_NAMES = ['María', 'Juan', 'Laura', 'Carlos', 'Sofía', 'Martín', 'Lucía', 'Diego', 'Valentina', 'Pablo']
+const LAST_NAMES  = ['Gómez', 'Pérez', 'Martínez', 'Fernández', 'López', 'Díaz', 'Romero', 'Sosa', 'Álvarez', 'Torres']
+const MESSAGES    = [null, 'Quiero más información', null, '¿Tienen financiación en cuotas?', null, '¿Hacen envíos al interior?']
+const HOUR_MS     = 60 * 60 * 1000
+
+const toEmailSlug = (text) => text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+
+let nextLeadId = 1
+
+export const leads = landings.flatMap((l) =>
+  Array.from({ length: l.leadCount }, (_, i) => {
+    const firstName = FIRST_NAMES[i % FIRST_NAMES.length]
+    const lastName  = LAST_NAMES[(i * 3 + l.id) % LAST_NAMES.length]
+
+    return {
+      id: nextLeadId++,
+      landingId: l.id,
+      name: `${firstName} ${lastName}`,
+      email: `${toEmailSlug(firstName)}.${toEmailSlug(lastName)}${i}@gmail.com`,
+      phone: i % 2 === 0 ? `11${String(40000000 + i * 7919).slice(0, 8)}` : null,
+      message: MESSAGES[i % MESSAGES.length],
+      createdAt: new Date(new Date(l.createdAt).getTime() + (i + 1) * 3 * HOUR_MS).toISOString(),
+    }
+  })
+)

@@ -4,6 +4,7 @@ import ActiveLandings from '../components/ActiveLandings'
 import AttentionAlerts from '../components/AttentionAlerts'
 import CampaignDetailModal from '../components/CampaignDetailModal'
 import KpiCard from '../components/KpiCard'
+import LandingLeadsModal from '../components/LandingLeadsModal'
 import { useDashboard } from '../hooks/dashboard.hook'
 import { formatMoney, formatNumber, formatPercent } from '../utils/format'
 
@@ -24,6 +25,7 @@ export default function Dashboard() {
   } = useDashboard()
 
   const [selectedCampaignId, setSelectedCampaignId] = useState(null)
+  const [selectedLandingId, setSelectedLandingId]   = useState(null)
 
   return (
     <main className="page">
@@ -94,12 +96,20 @@ export default function Dashboard() {
           campaigns={activeCampaignList}
           onSelect={(campaign) => setSelectedCampaignId(campaign.id)}
         />
-        <ActiveLandings landings={activeLandingList} />
+        <ActiveLandings
+          landings={activeLandingList}
+          onSelect={(landing) => setSelectedLandingId(landing.id)}
+        />
       </div>
 
       <CampaignDetailModal
         campaign={campaignDetailsById.get(selectedCampaignId) ?? null}
         onClose={() => setSelectedCampaignId(null)}
+      />
+
+      <LandingLeadsModal
+        landing={activeLandingList.find((l) => l.id === selectedLandingId) ?? null}
+        onClose={() => setSelectedLandingId(null)}
       />
 
       {/* TODO GD-F05: agregar selector de cliente para filtrar la vista */}

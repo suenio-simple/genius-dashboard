@@ -2,7 +2,6 @@ import { LayoutTemplate } from 'lucide-react'
 import { formatNumber } from '../utils/format'
 import { ListPanel, ListPanelItem } from './ListPanel'
 
-// TODO: pasar onSelect desde el Dashboard para abrir el modal de detalle de la landing
 export default function ActiveLandings({ landings, onSelect }) {
   return (
     <ListPanel
