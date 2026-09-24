@@ -62,7 +62,6 @@ function AlertDetail({ alert, currency }) {
   }
 }
 
-// TODO: pasar onSelect desde el Dashboard para abrir el modal de detalle de la campaña
 export default function AttentionAlerts({ alerts, currency, onSelect }) {
   return (
     <ListPanel

@@ -2,7 +2,6 @@ import { ListChecks } from 'lucide-react'
 import { formatMoney } from '../utils/format'
 import { ListPanel, ListPanelItem } from './ListPanel'
 
-// TODO: pasar onSelect desde el Dashboard para abrir el modal de detalle de la campaña
 export default function ActiveCampaigns({ campaigns, onSelect }) {
   return (
     <ListPanel

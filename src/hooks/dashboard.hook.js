@@ -12,38 +12,66 @@ const DAY_MS = 24 * 60 * 60 * 1000
 
 const sumBy = (items, key) => items.reduce((sum, item) => sum + (item[key] ?? 0), 0)
 
-function elapsedPercent(startDate, endDate, today) {
-  const start = new Date(startDate).getTime()
-  const end   = new Date(endDate).getTime() + DAY_MS // el día de fin cuenta completo
-  if (today < start) return 0
-  if (today >= end)  return 100
-  return ((today - start) / (end - start)) * 100
+// Las fechas vienen como 'YYYY-MM-DD'; se interpretan en hora local para que los días coincidan con el calendario
+const parseDate = (date) => new Date(`${date}T00:00:00`).getTime()
+
+function getPeriod(startDate, endDate, today) {
+  const start     = parseDate(startDate)
+  const end       = parseDate(endDate) + DAY_MS // el día de fin cuenta completo
+  const totalDays = Math.round((end - start) / DAY_MS)
+
+  if (today < start) return { timePercent: 0, totalDays, elapsedDays: 0, remainingDays: totalDays, phase: 'upcoming' }
+  if (today >= end)  return { timePercent: 100, totalDays, elapsedDays: totalDays, remainingDays: 0, phase: 'finished' }
+
+  const elapsedDays = Math.floor((today - start) / DAY_MS)
+  return {
+    timePercent: ((today - start) / (end - start)) * 100,
+    totalDays,
+    elapsedDays,
+    remainingDays: totalDays - elapsedDays,
+    phase: 'running',
+  }
 }
 
-function getAlert(summary, campaign, today) {
-  const { spent, totalBudget, percentageUsed } = summary
-  const timePercent = elapsedPercent(campaign.startDate, campaign.endDate, today)
-
-  if (spent > totalBudget)                           return { type: 'overBudget', excess: spent - totalBudget }
+function getAlert({ spent, budget, percentageUsed }, timePercent) {
+  if (spent > budget)                                return { type: 'overBudget', excess: spent - budget }
   if (percentageUsed >= NEAR_LIMIT_PERCENT)          return { type: 'nearLimit' }
   if (spent === 0 && timePercent > 0)                return { type: 'noSpend' }
-  if (percentageUsed - timePercent >= PACING_MARGIN) return { type: 'pacing', timePercent }
+  if (percentageUsed - timePercent >= PACING_MARGIN) return { type: 'pacing' }
   return null
 }
 
-function buildAlerts(today) {
-  const campaignsById = new Map(campaigns.map((c) => [c.id, c]))
+// Une el listado de campañas con su resumen de presupuesto y calcula período y diagnóstico
+function buildCampaignDetails(today) {
+  const summaryById = new Map(campaignsSummary.map((s) => [s.campaignId, s]))
 
-  return campaignsSummary
-    .map((summary) => {
-      const campaign = campaignsById.get(summary.campaignId)
-      if (campaign?.status !== 'active') 
-        return null
+  return campaigns.map((campaign) => {
+    const summary        = summaryById.get(campaign.id)
+    const percentageUsed = summary?.percentageUsed ?? (campaign.budget > 0 ? (campaign.spent / campaign.budget) * 100 : 0)
+    const period         = getPeriod(campaign.startDate, campaign.endDate, today)
+    const detail         = { ...campaign, percentageUsed, available: campaign.budget - campaign.spent, period }
 
-      const alert = getAlert(summary, campaign, today)
-      return alert && { ...summary, ...alert }
-    })
-    .filter(Boolean)
+    return {
+      ...detail,
+      alert: campaign.status === 'active' ? getAlert(detail, period.timePercent) : null,
+    }
+  })
+}
+
+function buildAlerts(campaignDetails) {
+  return campaignDetails
+    .filter((c) => c.alert)
+    .map((c) => ({
+      campaignId: c.id,
+      campaignName: c.name,
+      client: c.client,
+      totalBudget: c.budget,
+      spent: c.spent,
+      remaining: Math.max(c.available, 0),
+      percentageUsed: c.percentageUsed,
+      timePercent: c.period.timePercent,
+      ...c.alert,
+    }))
     .sort((a, b) => ALERT_PRIORITY.indexOf(a.type) - ALERT_PRIORITY.indexOf(b.type))
 }
 
@@ -55,6 +83,7 @@ export function useDashboard() {
     const activeCampaignList  = campaigns.filter((c) => c.status === 'active')
     const registeredCampaigns = campaigns.length
     const totalLeads          = sumBy(leadsSummary, 'leadCount')
+    const campaignDetails     = buildCampaignDetails(Date.now())
 
     return {
       currency: 'ARS',
@@ -67,7 +96,8 @@ export function useDashboard() {
       activeLandingList: landings.filter((l) => l.status === 'active'),
       registeredCampaigns,
       totalLeads,
-      alerts: buildAlerts(Date.now()),
+      alerts: buildAlerts(campaignDetails),
+      campaignDetailsById: new Map(campaignDetails.map((c) => [c.id, c])),
     }
   }, [])
 }

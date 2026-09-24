@@ -1,6 +1,8 @@
+import { useState } from 'react'
 import ActiveCampaigns from '../components/ActiveCampaigns'
 import ActiveLandings from '../components/ActiveLandings'
 import AttentionAlerts from '../components/AttentionAlerts'
+import CampaignDetailModal from '../components/CampaignDetailModal'
 import KpiCard from '../components/KpiCard'
 import { useDashboard } from '../hooks/dashboard.hook'
 import { formatMoney, formatNumber, formatPercent } from '../utils/format'
@@ -18,7 +20,10 @@ export default function Dashboard() {
     registeredCampaigns,
     totalLeads,
     alerts,
+    campaignDetailsById,
   } = useDashboard()
+
+  const [selectedCampaignId, setSelectedCampaignId] = useState(null)
 
   return (
     <main className="page">
@@ -77,13 +82,25 @@ export default function Dashboard() {
         />
       </section>
 
-      <AttentionAlerts alerts={alerts} currency={currency} />
+      <AttentionAlerts
+        alerts={alerts}
+        currency={currency}
+        onSelect={(alert) => setSelectedCampaignId(alert.campaignId)}
+      />
 
       {/* Lado a lado en pantallas grandes, una debajo de la otra en chicas */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-7 items-start mb-7">
-        <ActiveCampaigns campaigns={activeCampaignList} />
+        <ActiveCampaigns
+          campaigns={activeCampaignList}
+          onSelect={(campaign) => setSelectedCampaignId(campaign.id)}
+        />
         <ActiveLandings landings={activeLandingList} />
       </div>
+
+      <CampaignDetailModal
+        campaign={campaignDetailsById.get(selectedCampaignId) ?? null}
+        onClose={() => setSelectedCampaignId(null)}
+      />
 
       {/* TODO GD-F05: agregar selector de cliente para filtrar la vista */}
     </main>
