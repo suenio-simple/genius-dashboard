@@ -1,3 +1,4 @@
+import ActiveCampaigns from '../components/ActiveCampaigns'
 import AttentionAlerts from '../components/AttentionAlerts'
 import KpiCard from '../components/KpiCard'
 import { useDashboard } from '../hooks/dashboard.hook'
@@ -11,6 +12,7 @@ export default function Dashboard() {
     totalAvailable,
     spentPercent,
     activeCampaigns,
+    activeCampaignList,
     registeredCampaigns,
     totalLeads,
     alerts,
@@ -74,6 +76,8 @@ export default function Dashboard() {
       </section>
 
       <AttentionAlerts alerts={alerts} currency={currency} />
+
+      <ActiveCampaigns campaigns={activeCampaignList} />
 
       {/* TODO GD-F05: agregar selector de cliente para filtrar la vista */}
     </main>

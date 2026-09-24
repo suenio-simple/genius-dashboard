@@ -52,7 +52,7 @@ export function useDashboard() {
     const totalBudget         = sumBy(campaignsSummary, 'totalBudget')
     const totalSpent          = sumBy(campaignsSummary, 'spent')
     const totalAvailable      = sumBy(campaignsSummary, 'remaining')
-    const activeCampaigns     = campaigns.filter((c) => c.status === 'active').length
+    const activeCampaignList  = campaigns.filter((c) => c.status === 'active')
     const registeredCampaigns = campaigns.length
     const totalLeads          = sumBy(leadsSummary, 'leadCount')
 
@@ -62,7 +62,8 @@ export function useDashboard() {
       totalSpent,
       totalAvailable,
       spentPercent: totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0,
-      activeCampaigns,
+      activeCampaigns: activeCampaignList.length,
+      activeCampaignList,
       registeredCampaigns,
       totalLeads,
       alerts: buildAlerts(Date.now()),
