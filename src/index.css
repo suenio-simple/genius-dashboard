@@ -50,8 +50,11 @@ body {
 
 /* ── Page ── */
 .page { padding: 28px; }
-.page h1 { font-size: 1.25rem; font-weight: 700; }
-.page h2 { font-size: 1rem; font-weight: 700; margin: 24px 0 14px; color: #333; }
+/* En @layer base para que las utilidades de Tailwind puedan sobrescribirlos */
+@layer base {
+  .page h1 { font-size: 1.25rem; font-weight: 700; }
+  .page h2 { font-size: 1rem; font-weight: 700; margin: 24px 0 14px; color: #333; }
+}
 
 /* ── State messages ── */
 .state-msg { padding: 28px; color: var(--muted); font-size: 0.9rem; }

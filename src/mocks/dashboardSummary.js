@@ -3,14 +3,14 @@
 
 // GET /api/budget/campaigns
 export const campaigns = [
-  { id: 1, name: 'Email Recupero de Carritos',  client: 'SuenoSimple', type: 'Email',   status: 'active', budget: 30000 },
-  { id: 2, name: 'Google Ads Conversión',       client: 'FinanzasYa',  type: 'Search',  status: 'active', budget: 380000 },
-  { id: 3, name: 'Search Black Friday',         client: 'TechStore',   type: 'Search',  status: 'active', budget: 200000 },
-  { id: 4, name: 'Lanzamiento Colección Otoño', client: 'ModaExpress', type: 'Social',  status: 'active', budget: 280000 },
-  { id: 5, name: 'Reactivación Clientes VIP',   client: 'AutoSur',     type: 'Email',   status: 'active', budget: 150000 },
-  { id: 6, name: 'Brand Awareness Q1',          client: 'BioSalud',    type: 'Display', status: 'active', budget: 210000 },
-  { id: 7, name: 'Black Friday 2025 - Display', client: 'SuenoSimple', type: 'Display', status: 'closed', budget: 150000 },
-  { id: 8, name: 'Hot Sale 2026',               client: 'SuenoSimple', type: 'Display', status: 'draft',  budget: 80000 },
+  { id: 1, name: 'Email Recupero de Carritos',  client: 'SuenoSimple', type: 'email',   status: 'active', budget: 30000,  spent: 12400,  currency: 'ARS', startDate: '2026-08-01', endDate: '2026-10-31' },
+  { id: 2, name: 'Google Ads Conversión',       client: 'FinanzasYa',  type: 'search',  status: 'active', budget: 380000, spent: 345000, currency: 'ARS', startDate: '2026-09-01', endDate: '2026-09-30' },
+  { id: 3, name: 'Search Black Friday',         client: 'TechStore',   type: 'search',  status: 'active', budget: 200000, spent: 215000, currency: 'ARS', startDate: '2026-09-10', endDate: '2026-09-30' },
+  { id: 4, name: 'Lanzamiento Colección Otoño', client: 'ModaExpress', type: 'social',  status: 'active', budget: 280000, spent: 182000, currency: 'ARS', startDate: '2026-09-18', endDate: '2026-10-12' },
+  { id: 5, name: 'Reactivación Clientes VIP',   client: 'AutoSur',     type: 'email',   status: 'active', budget: 150000, spent: 0,      currency: 'ARS', startDate: '2026-09-01', endDate: '2026-09-30' },
+  { id: 6, name: 'Brand Awareness Q1',          client: 'BioSalud',    type: 'display', status: 'active', budget: 210000, spent: 111000, currency: 'ARS', startDate: '2026-08-15', endDate: '2026-10-15' },
+  { id: 7, name: 'Black Friday 2025 - Display', client: 'SuenoSimple', type: 'display', status: 'closed', budget: 150000, spent: 148200, currency: 'ARS', startDate: '2025-11-01', endDate: '2025-11-30' },
+  { id: 8, name: 'Hot Sale 2026',               client: 'SuenoSimple', type: 'display', status: 'draft',  budget: 80000,  spent: 0,      currency: 'ARS', startDate: '2026-10-15', endDate: '2026-10-31' },
 ]
 
 // GET /api/budget/campaigns/summary

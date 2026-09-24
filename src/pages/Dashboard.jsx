@@ -1,11 +1,7 @@
+import AttentionAlerts from '../components/AttentionAlerts'
 import KpiCard from '../components/KpiCard'
 import { useDashboard } from '../hooks/dashboard.hook'
-
-const numberFormat  = new Intl.NumberFormat('es-AR')
-const percentFormat = new Intl.NumberFormat('es-AR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
-
-const formatMoney   = (value) => `$ ${numberFormat.format(value)}`
-const formatPercent = (value) => `${percentFormat.format(value)}%`
+import { formatMoney, formatNumber, formatPercent } from '../utils/format'
 
 export default function Dashboard() {
   const {
@@ -17,6 +13,7 @@ export default function Dashboard() {
     activeCampaigns,
     registeredCampaigns,
     totalLeads,
+    alerts,
   } = useDashboard()
 
   return (
@@ -72,9 +69,11 @@ export default function Dashboard() {
         />
         <KpiCard
           label="Total leads"
-          value={<>{numberFormat.format(totalLeads)} <span className="text-sm font-normal text-muted">leads</span></>}
+          value={<>{formatNumber(totalLeads)} <span className="text-sm font-normal text-muted">leads</span></>}
         />
       </section>
+
+      <AttentionAlerts alerts={alerts} currency={currency} />
 
       {/* TODO GD-F05: agregar selector de cliente para filtrar la vista */}
     </main>
