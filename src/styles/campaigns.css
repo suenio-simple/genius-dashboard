@@ -16,7 +16,7 @@
 
 .kpi-card .kpi-label {
   font-size: 0.72rem;
-  font-weight: 700;
+  font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--muted);
@@ -35,47 +35,6 @@
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
-}
-
-.filter-input {
-  min-width: 260px;
-  flex: 1;
-  max-width: 420px;
-
-  padding: 9px 12px;
-
-  border: 1px solid var(--border);
-  border-radius: 6px;
-
-  background: var(--surface);
-  color: var(--text);
-
-  font: inherit;
-}
-
-.filter-input:focus {
-  outline: 2px solid rgba(13, 110, 253, 0.2);
-  border-color: var(--accent);
-}
-
-.filter-button {
-  padding: 9px 16px;
-
-  border: 0;
-  border-radius: 6px;
-
-  background: var(--accent);
-  color: #fff;
-
-  font: inherit;
-  font-weight: 600;
-
-  cursor: pointer;
-}
-
-.filter-button.secondary {
-  background: #e2e8f0;
-  color: var(--text);
 }
 
 /* ── Create campaigns ── */

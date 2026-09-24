@@ -25,20 +25,36 @@ export default function Dashboard() {
 
   return (
     <main className="page">
-      <h1>Dashboard</h1>
+      <section className="w-full flex flex-col md:flex-row md:items-center md:justify-between md:mb-5">
+        <div>
+          <h1 className="mb-0">Campañas</h1>
+          <p className="text-muted">
+            Resumen del estado y rendimiento de tus campañas
+          </p>
+        </div>
+        <div className="mt-5 mb-7 xl:my-0 flex flex-col items-center gap-2 md:flex-row md:gap-3">
+          <p className="bg-surface text-muted border border-border p-2 rounded-md shadow-sm flex items-center w-full md:w-fit">
+            <span className='bg-green-500 animate-pulse inline-block h-2 w-2 mr-2 rounded-full' aria-hidden='true'></span>
+            Actualizado hace 2 min
+          </p>
+          <button className="filter-button w-full md:w-fit">Actualizar</button>
+        </div>
+      </section>
 
       {/* TODO GD-F04: completar tarjetas de indicadores globales */}
       <div className="kpi-grid">
         <div className="kpi-card">
           <div className="kpi-label">Campañas activas</div>
-          <div className="kpi-value">{budgetSummary?.activeCampaigns ?? '—'}</div>
+          <div className="kpi-value">
+            {budgetSummary?.activeCampaigns ?? "—"}
+          </div>
         </div>
         <div className="kpi-card">
           <div className="kpi-label">Presupuesto total</div>
           <div className="kpi-value">
             {budgetSummary?.totalBudget != null
               ? `$${budgetSummary.totalBudget.toLocaleString()}`
-              : '—'}
+              : "—"}
           </div>
         </div>
         <div className="kpi-card">
@@ -46,7 +62,7 @@ export default function Dashboard() {
           <div className="kpi-value">
             {budgetSummary?.totalSpent != null
               ? `$${budgetSummary.totalSpent.toLocaleString()}`
-              : '—'}
+              : "—"}
           </div>
         </div>
         <div className="kpi-card">
@@ -57,5 +73,5 @@ export default function Dashboard() {
 
       {/* TODO GD-F05: agregar selector de cliente para filtrar la vista */}
     </main>
-  )
+  );
 }
