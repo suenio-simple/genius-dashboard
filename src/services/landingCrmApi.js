@@ -8,11 +8,14 @@ export async function getLandings(params = {}) {
 }
 
 export async function getLeadsSummary() {
-  const res = await fetch(`${BASE}/landings/summary`)
-  if (!res.ok) throw new Error(`Landing CRM: ${res.status}`)
-  return res.json()
-}
+  const response = await fetch('/api/crm/landings/summary')
 
+  if (!response.ok) {
+    throw new Error('Error al obtener resumen de leads')
+  }
+
+  return response.json()
+}
 export async function getLandingLeads(id) {
   const res = await fetch(`${BASE}/landings/${id}/leads`)
   if (!res.ok) throw new Error(`Landing CRM: ${res.status}`)

@@ -8,9 +8,13 @@ export async function getCampaigns(params = {}) {
 }
 
 export async function getBudgetSummary() {
-  const res = await fetch(`${BASE}/campaigns/summary`);
-  if (!res.ok) throw new Error(`Budget Manager: ${res.status}`);
-  return res.json();
+  const response = await fetch('/api/budget/campaigns/summary')
+
+  if (!response.ok) {
+    throw new Error('Error al obtener resumen de presupuesto')
+  }
+
+  return response.json()
 }
 
 export async function getCampaignBudget(id) {
