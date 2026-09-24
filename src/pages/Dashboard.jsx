@@ -1,27 +1,23 @@
-import { useEffect, useState } from 'react'
-import { getBudgetSummary } from '../services/budgetManagerApi'
-import { getLeadsSummary } from '../services/landingCrmApi'
+import KpiCard from '../components/KpiCard'
+import { useDashboard } from '../hooks/dashboard.hook'
+
+const numberFormat  = new Intl.NumberFormat('es-AR')
+const percentFormat = new Intl.NumberFormat('es-AR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
+
+const formatMoney   = (value) => `$ ${numberFormat.format(value)}`
+const formatPercent = (value) => `${percentFormat.format(value)}%`
 
 export default function Dashboard() {
-  const [budgetSummary, setBudgetSummary] = useState(null)
-  const [leadsSummary, setLeadsSummary]   = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError]     = useState(null)
-
-  useEffect(() => {
-    Promise.all([getBudgetSummary(), getLeadsSummary()])
-      .then(([budget, leads]) => {
-        setBudgetSummary(budget)
-        setLeadsSummary(leads)
-      })
-      .catch(setError)
-      .finally(() => setLoading(false))
-  }, [])
-
-  if (loading) return <p className="state-msg">Cargando...</p>
-  if (error)   return <p className="state-msg error">Error al conectar con las APIs: {error.message}</p>
-
-  const totalLeads = leadsSummary.reduce((sum, l) => sum + (l.leadCount ?? 0), 0)
+  const {
+    currency,
+    totalBudget,
+    totalSpent,
+    totalAvailable,
+    spentPercent,
+    activeCampaigns,
+    registeredCampaigns,
+    totalLeads,
+  } = useDashboard()
 
   return (
     <main className="page">
@@ -41,35 +37,44 @@ export default function Dashboard() {
         </div>
       </section>
 
-      {/* TODO GD-F04: completar tarjetas de indicadores globales */}
-      <div className="kpi-grid">
-        <div className="kpi-card">
-          <div className="kpi-label">Campañas activas</div>
-          <div className="kpi-value">
-            {budgetSummary?.activeCampaigns ?? "—"}
-          </div>
-        </div>
-        <div className="kpi-card">
-          <div className="kpi-label">Presupuesto total</div>
-          <div className="kpi-value">
-            {budgetSummary?.totalBudget != null
-              ? `$${budgetSummary.totalBudget.toLocaleString()}`
-              : "—"}
-          </div>
-        </div>
-        <div className="kpi-card">
-          <div className="kpi-label">Total gastado</div>
-          <div className="kpi-value">
-            {budgetSummary?.totalSpent != null
-              ? `$${budgetSummary.totalSpent.toLocaleString()}`
-              : "—"}
-          </div>
-        </div>
-        <div className="kpi-card">
-          <div className="kpi-label">Total leads</div>
-          <div className="kpi-value">{totalLeads}</div>
-        </div>
-      </div>
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-7">
+        <KpiCard
+          label="Presupuesto total"
+          value={<span className="font-mono">{formatMoney(totalBudget)}</span>}
+          footer={<span className="text-slate-400 font-mono">{currency} asignado</span>}
+        />
+        <KpiCard
+          label="Total gastado"
+          badge={
+            <span className="text-xs font-bold text-amber-600 font-mono bg-amber-50 px-2 py-0.5 rounded border border-amber-100">
+              {formatPercent(spentPercent)}
+            </span>
+          }
+          value={<span className="font-mono">{formatMoney(totalSpent)}</span>}
+          footer={
+            <>
+              <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                <div className="h-full bg-amber-500 rounded-full" style={{ width: `${Math.min(spentPercent, 100)}%` }} />
+              </div>
+              <span className="text-slate-400 font-mono block mt-1.5">Límite mensual</span>
+            </>
+          }
+        />
+        <KpiCard
+          label="Total disponible"
+          value={<span className="font-mono text-emerald-600">{formatMoney(totalAvailable)}</span>}
+          footer={<span className="text-slate-400 font-mono">{currency} remanente</span>}
+        />
+        <KpiCard
+          label="Campañas activas"
+          value={<>{activeCampaigns} <span className="text-sm font-normal text-muted">activas</span></>}
+          footer={<span className="text-emerald-600 font-medium">{registeredCampaigns} registradas</span>}
+        />
+        <KpiCard
+          label="Total leads"
+          value={<>{numberFormat.format(totalLeads)} <span className="text-sm font-normal text-muted">leads</span></>}
+        />
+      </section>
 
       {/* TODO GD-F05: agregar selector de cliente para filtrar la vista */}
     </main>
