@@ -55,7 +55,7 @@ export const landings = [
     title: 'Cuidate con BioSalud', subtitle: 'Planes de salud para toda la familia', ctaText: 'Conocer planes',
     ctaUrl: 'https://biosalud.com/planes', eventDate: '2026-08-15',
   }),
-  landing(8, 1, 'Black Friday 2025 - SuenoSimple', 'SuenoSimple', 'inactive', 0, '2025-10-20T10:00:00.000Z', {
+  landing(8, 1, 'Black Friday 2025 - SuenoSimple', 'SuenoSimple', 'closed', 0, '2025-10-20T10:00:00.000Z', {
     title: 'Black Friday 2025', subtitle: 'Colchones con hasta 60% off', ctaText: 'Ver ofertas',
     ctaUrl: 'https://suenosimple.com/black-friday', eventDate: '2025-11-01',
   }),

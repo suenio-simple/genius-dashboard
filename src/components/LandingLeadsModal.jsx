@@ -5,8 +5,9 @@ import { Modal, StatusPill, TagBadge } from './Modal'
 
 const STATUS_STYLES = {
   active:   { label: 'Activa',   pill: 'bg-emerald-100 text-emerald-800', dot: 'bg-emerald-500' },
-  inactive: { label: 'Inactiva', pill: 'bg-slate-200 text-slate-700',     dot: 'bg-slate-500' },
+  paused:   { label: 'Pausada',  pill: 'bg-amber-100 text-amber-800',     dot: 'bg-amber-500' },
   draft:    { label: 'Borrador', pill: 'bg-slate-100 text-slate-600',     dot: 'bg-slate-400' },
+  closed:   { label: 'Cerrada',  pill: 'bg-slate-200 text-slate-700',     dot: 'bg-slate-500' },
 }
 
 function LeadItem({ lead }) {

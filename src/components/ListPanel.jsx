@@ -43,7 +43,7 @@ export function ListPanelItem({ leading, title, badge, description, onClick }) {
         </span>
         {/* Con ícono a la izquierda, se alinea con el texto (40px del ícono + 14px de gap - 12px de padding) */}
         <span
-          className={`self-start sm:self-auto sm:ml-0 ${leading ? 'ml-[42px]' : '-ml-3'} text-xs font-semibold text-accent group-hover:text-blue-700 px-3 py-1.5 rounded-lg group-hover:bg-blue-50 transition-colors shrink-0`}
+          className={`self-start sm:self-auto sm:ml-0 ${leading ? 'ml-10.5' : '-ml-3'} text-xs font-semibold text-accent group-hover:text-blue-700 px-3 py-1.5 rounded-lg group-hover:bg-blue-50 transition-colors shrink-0`}
         >
           Ver detalle
         </span>
