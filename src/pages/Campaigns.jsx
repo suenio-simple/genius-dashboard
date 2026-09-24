@@ -18,6 +18,7 @@ const CAMPAIGN_STATUS = [
   'paused',
   'closed',
 ]
+
 export default function Campaigns() {
   const [campaigns, setCampaigns] = useState([])
   const [loading, setLoading] = useState(true)
@@ -36,14 +37,38 @@ export default function Campaigns() {
       .finally(() => setLoading(false))
   }, [filtroCliente])
 
-  const buscarCliente = event => {
+  const buscarCliente = async (event) => {
     event.preventDefault()
-    setFiltroCliente(busquedaCliente)
+    try {
+      setLoading(true)
+      setError(null)
+
+      const resultados = await getCampaigns({
+        client: busquedaCliente.trim(),
+      })
+
+      setCampaigns(resultados)
+      setFiltroCliente(busquedaCliente)
+    } catch (err) {
+      setError(err)
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const limpiarFiltro = () => {
+  const limpiarFiltro = async () => {
     setBusquedaCliente('')
     setFiltroCliente('')
+    setLoading(true)
+
+    try {
+      const resultados = await getCampaigns()
+      setCampaigns(resultados)
+    } catch (err) {
+      setError(err)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const toggleModal = () => {
@@ -117,7 +142,7 @@ export default function Campaigns() {
           )}
         </form>
 
-        <button 
+        <button
           className="filter-button"
           onClick={toggleModal}
         >
@@ -147,9 +172,8 @@ export default function Campaigns() {
 
             <div style={{ textAlign: 'right' }}>
               <select
-                className={`badge ${
-                  STATUS_BADGE[c.status] ?? 'badge-draft'
-                }`}
+                className={`badge ${STATUS_BADGE[c.status] ?? 'badge-draft'
+                  }`}
                 value={c.status}
                 onChange={event =>
                   handleStatusChange(
