@@ -6,10 +6,10 @@ import {
 import CreateCampaignForm from '../components/CreateCampaignForm'
 
 const STATUS_BADGE = {
-  active: 'badge-active',
-  paused: 'badge-paused',
-  completed: 'badge-closed',
-  draft: 'badge-draft',
+  active:  'badge-active',
+  paused:  'badge-paused',
+  closed:  'badge-closed',
+  draft:   'badge-draft',
 }
 
 const CAMPAIGN_STATUS = [
@@ -29,21 +29,12 @@ export default function Campaigns() {
   const [showCreateCampaign, setShowCreateCampaign] = useState(false);
 
   useEffect(() => {
-    getCampaigns()
+    setLoading(true)
+    getCampaigns({ client: filtroCliente || undefined })
       .then(setCampaigns)
       .catch(setError)
       .finally(() => setLoading(false))
-  }, [])
-
-  const campaignsFiltradas = useMemo(() => {
-    const texto = filtroCliente.trim().toLowerCase()
-
-    if (!texto) return campaigns
-
-    return campaigns.filter(campaign =>
-      campaign.client?.toLowerCase().includes(texto)
-    )
-  }, [campaigns, filtroCliente])
+  }, [filtroCliente])
 
   const buscarCliente = event => {
     event.preventDefault()
@@ -135,7 +126,7 @@ export default function Campaigns() {
       </section>
 
       <div className="item-list">
-        {campaignsFiltradas.length === 0 && (
+        {campaigns.length === 0 && (
           <p className="state-msg">
             {filtroCliente
               ? `No se encontraron campañas para el cliente "${filtroCliente}".`
@@ -144,7 +135,7 @@ export default function Campaigns() {
         )}
 
         {/* el id no es confiable como key: el backend puede repetirlo */}
-        {campaignsFiltradas.map((c, indice) => (
+        {campaigns.map((c, indice) => (
           <div key={`${c.id}-${indice}`} className="item-card">
             <div>
               <div className="item-name">{c.name}</div>
