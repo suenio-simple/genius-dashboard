@@ -51,7 +51,7 @@ export function useDashboard() {
   return useMemo(() => {
     const totalBudget         = sumBy(campaignsSummary, 'totalBudget')
     const totalSpent          = sumBy(campaignsSummary, 'spent')
-    const totalAvailable      = sumBy(campaignsSummary, 'remaining')
+    const totalAvailable      = totalBudget - totalSpent
     const activeCampaignList  = campaigns.filter((c) => c.status === 'active')
     const registeredCampaigns = campaigns.length
     const totalLeads          = sumBy(leadsSummary, 'leadCount')
