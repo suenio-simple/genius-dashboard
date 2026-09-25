@@ -35,13 +35,18 @@ export default function Landings() {
           <div key={l.id} className="item-card">
             <div>
               <div className="item-name">{l.name ?? l.title}</div>
-              <div className="item-meta">{l.client} · Template: {l.template}</div>
+              <div className="item-meta">{l.client} · Template: {l.templateId}</div>
             </div>
             <div style={{ textAlign: 'right' }}>
               <span className={`badge ${STATUS_BADGE[l.status] ?? 'badge-draft'}`}>
                 {l.status}
               </span>
               {/* TODO GD-F03: mostrar l.leadCount aquí */}
+              {l.leadCount != null && (
+                <div className="item-lead-count">
+                  <strong>{l.leadCount}</strong> leads
+                </div>
+              )}
             </div>
           </div>
         ))}
