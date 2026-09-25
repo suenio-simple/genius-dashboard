@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react'
 import { getLandings } from '../services/landingCrmApi'
 
 const STATUS_BADGE = {
-  activa:   'badge-active',
-  inactiva: 'badge-closed',
-  borrador: 'badge-draft',
+  active: { label: 'Activa',   className: 'badge-active' },
+  paused: { label: 'Pausada',  className: 'badge-paused' },
+  draft:  { label: 'Borrador', className: 'badge-draft' },
+  closed: { label: 'Cerrada',  className: 'badge-closed' },
 }
 
 export default function Landings() {
@@ -38,8 +39,8 @@ export default function Landings() {
               <div className="item-meta">{l.client} · Template: {l.templateId}</div>
             </div>
             <div style={{ textAlign: 'right' }}>
-              <span className={`badge ${STATUS_BADGE[l.status] ?? 'badge-draft'}`}>
-                {l.status}
+              <span className={`badge ${STATUS_BADGE[l.status]?.className ?? 'badge-draft'}`}>
+                {STATUS_BADGE[l.status]?.label ?? l.status}
               </span>
               {/* TODO GD-F03: mostrar l.leadCount aquí */}
               {l.leadCount != null && (

@@ -1,3 +1,5 @@
+import '../styles/modals.css'
+
 import { useState } from 'react'
 import { createCampaign } from '../services/budgetManagerApi'
 

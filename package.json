@@ -11,15 +11,18 @@
     "test:run": "vitest run"
   },
   "dependencies": {
+    "lucide-react": "^1.48.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.23.1"
   },
   "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
     "@vitejs/plugin-react": "^4.3.1",
     "jsdom": "^29.1.1",
+    "tailwindcss": "^4.3.3",
     "vite": "^6.4.3",
     "vitest": "^5.0.1"
   }

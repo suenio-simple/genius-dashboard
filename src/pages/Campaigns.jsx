@@ -1,3 +1,5 @@
+import '../styles/campaigns.css'
+
 import { useEffect, useMemo, useState } from 'react'
 import {
   getCampaigns,
@@ -35,16 +37,6 @@ export default function Campaigns() {
       .catch(setError)
       .finally(() => setLoading(false))
   }, [])
-
-  // const campaignsFiltradas = useMemo(() => {
-  //   const texto = filtroCliente.trim().toLowerCase()
-
-  //   if (!texto) return campaigns
-
-  //   return campaigns.filter(campaign =>
-  //     campaign.client?.toLowerCase().includes(texto)
-  //   )
-  // }, [campaigns, filtroCliente])
 
   const buscarCliente = async (event) => {
     event.preventDefault()
@@ -123,8 +115,6 @@ export default function Campaigns() {
 
   return (
     <main className="page">
-      <h1>Campañas</h1>
-
       <section className="campaign-actions">
         <form className="campaign-filters" onSubmit={buscarCliente}>
           <input
@@ -151,10 +141,7 @@ export default function Campaigns() {
           )}
         </form>
 
-        <button
-          className="filter-button"
-          onClick={toggleModal}
-        >
+        <button className="filter-button" onClick={toggleModal}>
           + Agregar campaña
         </button>
       </section>
@@ -179,35 +166,23 @@ export default function Campaigns() {
               </div>
             </div>
 
-            <div style={{ textAlign: 'right' }}>
+            <div style={{ textAlign: "right" }}>
               <select
-                className={`badge ${STATUS_BADGE[c.status] ?? 'badge-draft'
-                  }`}
+                className={`badge ${STATUS_BADGE[c.status] ?? "badge-draft"}`}
                 value={c.status}
-                onChange={event =>
-                  handleStatusChange(
-                    c.id,
-                    event.target.value
-                  )
+                onChange={(event) =>
+                  handleStatusChange(c.id, event.target.value)
                 }
               >
-                {CAMPAIGN_STATUS.map(status => (
-                  <option
-                    key={status}
-                    value={status}
-                  >
+                {CAMPAIGN_STATUS.map((status) => (
+                  <option key={status} value={status}>
                     {status}
                   </option>
                 ))}
               </select>
 
-              <div
-                className="item-meta"
-                style={{ marginTop: 6 }}
-              >
-                $
-                {(c.budget ?? 0).toLocaleString()}{' '}
-                presupuesto
+              <div className="item-meta" style={{ marginTop: 6 }}>
+                ${(c.budget ?? 0).toLocaleString()} presupuesto
               </div>
             </div>
           </div>
