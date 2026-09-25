@@ -6,19 +6,19 @@ import {
   AlertaClienteSinGasto,
   CampanaActiva,
 } from './dashboard.dto';
-import { getCampaigns, getGlobalBudgetSummary } from './genius-budget-manager/genius-budget-manager.connector';
+import { getCampaigns, getBudgetSummary } from '../budgetManagerApi';
 import {
   buildCriticalAlert,
   buildWarningAlert,
   buildSpendVelocityAlert,
   buildNoSpendAlert,
   buildActiveCampaigns,
-} from './genius-budget-manager/genius-budget-manager.service';
-import { getCrmDashboardData } from './genius-crm/genius-crm.service';
+} from '../genius-budget-manager/genius-budget-manager.service';
+import { getCrmDashboardData } from '../genius-crm/genius-crm.service';
 
 // Datos generales
 export async function getDatosGenerales() {
-  const [summary, crm] = await Promise.all([getGlobalBudgetSummary(), getCrmDashboardData()]);
+  const [summary, crm] = await Promise.all([getBudgetSummary(), getCrmDashboardData()]);
 
   return new DatosGenerales({
     presupuesto_total: summary.totalBudget,
@@ -33,29 +33,25 @@ export async function getDatosGenerales() {
 // Alerta crítico
 export async function getAlertaCritico() {
   const campaigns = await getCampaigns({ status: 'active' });
-  const alerta = buildCriticalAlert(campaigns);
-  return alerta ? new AlertaCritico(alerta) : null;
+  return buildCriticalAlert(campaigns).map((alerta) => new AlertaCritico(alerta));
 }
 
 // Alerta advertencia
 export async function getAlertaAdvertencia() {
   const campaigns = await getCampaigns({ status: 'active' });
-  const alerta = buildWarningAlert(campaigns);
-  return alerta ? new AlertaAdvertencia(alerta) : null;
+  return buildWarningAlert(campaigns).map((alerta) => new AlertaAdvertencia(alerta));
 }
 
 // Alerta velocidad de gasto
 export async function getAlertaVelocidadDeGasto() {
   const campaigns = await getCampaigns({ status: 'active' });
-  const alerta = buildSpendVelocityAlert(campaigns);
-  return alerta ? new AlertaVelocidadDeGasto(alerta) : null;
+  return buildSpendVelocityAlert(campaigns).map((alerta) => new AlertaVelocidadDeGasto(alerta));
 }
 
 // Cliente sin gasto
 export async function getAlertaClienteSinGasto() {
   const campaigns = await getCampaigns({ status: 'active' });
-  const alerta = buildNoSpendAlert(campaigns);
-  return alerta ? new AlertaClienteSinGasto(alerta) : null;
+  return buildNoSpendAlert(campaigns).map((alerta) => new AlertaClienteSinGasto(alerta));
 }
 
 // Campañas activas

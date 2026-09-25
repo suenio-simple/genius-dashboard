@@ -1,17 +1,17 @@
 import { useEffect, useState } from 'react';
-import { getAlertaCritico } from '../dashboard.service';
+import { getCampanasActivas } from '../services/dashboard/dashboard.service';
 
-export function useAlertaCritico() {
-  const [alertaCritico, setAlertaCritico] = useState(null);
+export function useCampanasActivas() {
+  const [campanasActivas, setCampanasActivas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
 
-    getAlertaCritico()
+    getCampanasActivas()
       .then((data) => {
-        if (!cancelled) setAlertaCritico(data);
+        if (!cancelled) setCampanasActivas(data);
       })
       .catch((err) => {
         if (!cancelled) setError(err);
@@ -25,5 +25,5 @@ export function useAlertaCritico() {
     };
   }, []);
 
-  return { alertaCritico, loading, error };
+  return { campanasActivas, loading, error };
 }

@@ -1,4 +1,4 @@
-import { getCampaigns, getGlobalBudgetSummary } from './genius-budget-manager.connector';
+import { getCampaigns, getBudgetSummary } from '../budgetManagerApi';
 
 export const CRITICAL_THRESHOLD = 90;
 export const WARNING_THRESHOLD = 70;
@@ -25,73 +25,62 @@ export function buildActiveCampaigns(campaigns) {
 }
 
 export function buildCriticalAlert(campaigns) {
-  const worst = campaigns
+  return campaigns
     .map((campaign) => ({ campaign, pct: calculatePercentageUsed(campaign) }))
     .filter(({ pct }) => pct >= CRITICAL_THRESHOLD)
-    .sort((a, b) => b.pct - a.pct)[0];
-
-  if (!worst) return null;
-
-  return {
-    nombre_de_cliente: worst.campaign.client,
-    descripcion: 'El presupuesto está próximo a agotarse',
-    presupuesto: worst.campaign.budget,
-    total_gastado: worst.campaign.spent,
-  };
+    .sort((a, b) => b.pct - a.pct)
+    .map(({ campaign }) => ({
+      nombre_de_cliente: campaign.client,
+      descripcion: 'El presupuesto está próximo a agotarse',
+      presupuesto: campaign.budget,
+      total_gastado: campaign.spent,
+    }));
 }
 
 export function buildWarningAlert(campaigns) {
-  const worst = campaigns
+  return campaigns
     .map((campaign) => ({ campaign, pct: calculatePercentageUsed(campaign) }))
     .filter(({ pct }) => pct >= WARNING_THRESHOLD && pct < CRITICAL_THRESHOLD)
-    .sort((a, b) => b.pct - a.pct)[0];
-
-  if (!worst) return null;
-
-  return {
-    nombre_de_cliente: worst.campaign.client,
-    descripcion: 'El cliente está utilizando gran parte del presupuesto',
-    porcentaje_gastado_del_total: worst.pct,
-    total_disponible: worst.campaign.budget - worst.campaign.spent,
-  };
+    .sort((a, b) => b.pct - a.pct)
+    .map(({ campaign, pct }) => ({
+      nombre_de_cliente: campaign.client,
+      descripcion: 'El cliente está utilizando gran parte del presupuesto',
+      porcentaje_gastado_del_total: pct,
+      total_disponible: campaign.budget - campaign.spent,
+    }));
 }
 
 export function buildSpendVelocityAlert(campaigns, now = Date.now()) {
-  const worst = campaigns
+  return campaigns
     .map((campaign) => {
       const periodPct = calculatePeriodElapsedPercentage(campaign, now);
       const spentPct = calculatePercentageUsed(campaign);
       return { campaign, periodPct, spentPct, gap: periodPct === null ? null : spentPct - periodPct };
     })
     .filter(({ gap }) => gap !== null && gap >= VELOCITY_GAP_THRESHOLD)
-    .sort((a, b) => b.gap - a.gap)[0];
-
-  if (!worst) return null;
-
-  return {
-    nombre_de_cliente: worst.campaign.client,
-    descripcion: 'El gasto está avanzando más rápido que el período',
-    porcentaje_de_plata_consumido: worst.spentPct,
-    porcentaje_de_periodo_usado: worst.periodPct,
-  };
+    .sort((a, b) => b.gap - a.gap)
+    .map(({ campaign, periodPct, spentPct }) => ({
+      nombre_de_cliente: campaign.client,
+      descripcion: 'El gasto está avanzando más rápido que el período',
+      porcentaje_de_plata_consumido: spentPct,
+      porcentaje_de_periodo_usado: periodPct,
+    }));
 }
 
 export function buildNoSpendAlert(campaigns) {
-  const noSpend = campaigns.find((campaign) => campaign.spent === 0);
-
-  if (!noSpend) return null;
-
-  return {
-    nombre_de_cliente: noSpend.client,
-    descripcion: 'El cliente todavía no registra gastos',
-    porcentaje_del_total_gastado: 0,
-    total_disponible: noSpend.budget,
-  };
+  return campaigns
+    .filter((campaign) => campaign.spent === 0)
+    .map((campaign) => ({
+      nombre_de_cliente: campaign.client,
+      descripcion: 'El cliente todavía no registra gastos',
+      porcentaje_del_total_gastado: 0,
+      total_disponible: campaign.budget,
+    }));
 }
 
 export async function getBudgetManagerDashboardData() {
   const [summary, activeCampaigns] = await Promise.all([
-    getGlobalBudgetSummary(),
+    getBudgetSummary(),
     getCampaigns({ status: 'active' }),
   ]);
 

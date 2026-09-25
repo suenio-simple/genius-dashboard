@@ -1,4 +1,4 @@
-import { getLandingsSummary, getLandingLeads } from './genius-crm.connector';
+import { getLeadsSummary, getLandingLeads } from '../landingCrmApi';
 
 export function calculateTotalLeads(landings) {
   return landings.reduce((total, landing) => total + landing.leadCount, 0);
@@ -34,7 +34,7 @@ export function buildLandingsBreakdown(landings) {
 }
 
 export async function getCrmDashboardData() {
-  const landings = await getLandingsSummary();
+  const landings = await getLeadsSummary();
 
   return {
     total_de_leads: calculateTotalLeads(landings),

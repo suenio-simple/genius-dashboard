@@ -1,17 +1,17 @@
 import { useEffect, useState } from 'react';
-import { getDatosGenerales } from '../dashboard.service';
+import { getAlertaVelocidadDeGasto } from '../services/dashboard/dashboard.service';
 
-export function useDatosGenerales() {
-  const [datosGenerales, setDatosGenerales] = useState(null);
+export function useAlertaVelocidadDeGasto() {
+  const [alertaVelocidadDeGasto, setAlertaVelocidadDeGasto] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
 
-    getDatosGenerales()
+    getAlertaVelocidadDeGasto()
       .then((data) => {
-        if (!cancelled) setDatosGenerales(data);
+        if (!cancelled) setAlertaVelocidadDeGasto(data);
       })
       .catch((err) => {
         if (!cancelled) setError(err);
@@ -25,5 +25,5 @@ export function useDatosGenerales() {
     };
   }, []);
 
-  return { datosGenerales, loading, error };
+  return { alertaVelocidadDeGasto, loading, error };
 }

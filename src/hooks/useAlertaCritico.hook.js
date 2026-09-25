@@ -1,17 +1,17 @@
 import { useEffect, useState } from 'react';
-import { getAlertaAdvertencia } from '../dashboard.service';
+import { getAlertaCritico } from '../services/dashboard/dashboard.service';
 
-export function useAlertaAdvertencia() {
-  const [alertaAdvertencia, setAlertaAdvertencia] = useState(null);
+export function useAlertaCritico() {
+  const [alertaCritico, setAlertaCritico] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
 
-    getAlertaAdvertencia()
+    getAlertaCritico()
       .then((data) => {
-        if (!cancelled) setAlertaAdvertencia(data);
+        if (!cancelled) setAlertaCritico(data);
       })
       .catch((err) => {
         if (!cancelled) setError(err);
@@ -25,5 +25,5 @@ export function useAlertaAdvertencia() {
     };
   }, []);
 
-  return { alertaAdvertencia, loading, error };
+  return { alertaCritico, loading, error };
 }

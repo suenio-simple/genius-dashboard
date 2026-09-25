@@ -44,3 +44,41 @@ export async function createCampaign(campaign) {
   if (!res.ok) throw new Error(`Budget Manager: ${res.status}`);
   return res.json();
 }
+
+export async function getCampaignById(id) {
+  const res = await fetch(`${BASE}/campaigns/${id}`);
+  if (!res.ok) throw new Error(`Budget Manager: ${res.status}`);
+  return res.json();
+}
+
+export async function getCampaignSummary(id) {
+  const res = await fetch(`${BASE}/campaigns/${id}/summary`);
+  if (!res.ok) throw new Error(`Budget Manager: ${res.status}`);
+  return res.json();
+}
+
+export async function getCampaignExpenses(id) {
+  const res = await fetch(`${BASE}/campaigns/${id}/expenses`);
+  if (!res.ok) throw new Error(`Budget Manager: ${res.status}`);
+  return res.json();
+}
+
+export async function addCampaignExpense(id, expense) {
+  const res = await fetch(`${BASE}/campaigns/${id}/expenses`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(expense),
+  });
+  if (!res.ok) throw new Error(`Budget Manager: ${res.status}`);
+  return res.json();
+}
+
+export async function updateCampaignBudget(id, budget) {
+  const res = await fetch(`${BASE}/campaigns/${id}/budget`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ budget }),
+  });
+  if (!res.ok) throw new Error(`Budget Manager: ${res.status}`);
+  return res.json();
+}

@@ -1,17 +1,17 @@
 import { useEffect, useState } from 'react';
-import { getCampanasActivas } from '../dashboard.service';
+import { getAlertaClienteSinGasto } from '../services/dashboard/dashboard.service';
 
-export function useCampanasActivas() {
-  const [campanasActivas, setCampanasActivas] = useState([]);
+export function useAlertaClienteSinGasto() {
+  const [alertaClienteSinGasto, setAlertaClienteSinGasto] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
 
-    getCampanasActivas()
+    getAlertaClienteSinGasto()
       .then((data) => {
-        if (!cancelled) setCampanasActivas(data);
+        if (!cancelled) setAlertaClienteSinGasto(data);
       })
       .catch((err) => {
         if (!cancelled) setError(err);
@@ -25,5 +25,5 @@ export function useCampanasActivas() {
     };
   }, []);
 
-  return { campanasActivas, loading, error };
+  return { alertaClienteSinGasto, loading, error };
 }
