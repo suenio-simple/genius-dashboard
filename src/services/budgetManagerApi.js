@@ -1,84 +1,31 @@
-const BASE = "/api/budget";
+const BASE = '/api/budget'
 
-export async function getCampaigns(params = {}) {
-  const query = new URLSearchParams(params).toString();
-  const res = await fetch(`${BASE}/campaigns${query ? "?" + query : ""}`);
-  if (!res.ok) throw new Error(`Budget Manager: ${res.status}`);
-  return res.json();
-}
-
-export async function getBudgetSummary() {
-  const res = await fetch(`${BASE}/campaigns/summary`);
-  if (!res.ok) throw new Error(`Budget Manager: ${res.status}`);
-  return res.json();
-}
-
-export async function getCampaignBudget(id) {
-  const res = await fetch(`${BASE}/campaigns/${id}/budget`);
-  if (!res.ok) throw new Error(`Budget Manager: ${res.status}`);
-  return res.json();
-}
-
-export async function updateCampaignStatus(id, status) {
-  const res = await fetch(`${BASE}/campaigns/${id}/status`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ status }),
+async function request(path, { method = 'GET', body } = {}) {
+  const res = await fetch(`${BASE}${path}`, {
+    method,
+    headers: body ? { 'Content-Type': 'application/json' } : undefined,
+    body: body ? JSON.stringify(body) : undefined,
   })
-
-  if (!res.ok) {
-    throw new Error(`Budget Manager: ${res.status}`)
-  }
-
+  if (!res.ok) throw new Error(`Budget Manager: ${res.status}`)
   return res.json()
 }
 
-export async function createCampaign(campaign) {
-  const res = await fetch(`${BASE}/campaigns`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(campaign),
-  });
-  if (!res.ok) throw new Error(`Budget Manager: ${res.status}`);
-  return res.json();
+// El filtro ?status= del backend compara contra el tipo y no contra el estado: filtrar en el front
+export function getCampaigns(params = {}) {
+  const query = new URLSearchParams(params).toString()
+  return request(`/campaigns${query ? '?' + query : ''}`)
 }
 
-export async function getCampaignById(id) {
-  const res = await fetch(`${BASE}/campaigns/${id}`);
-  if (!res.ok) throw new Error(`Budget Manager: ${res.status}`);
-  return res.json();
-}
+export const getCampaignById      = (id) => request(`/campaigns/${id}`)
+export const createCampaign       = (campaign) => request('/campaigns', { method: 'POST', body: campaign })
+export const updateCampaignStatus = (id, status) => request(`/campaigns/${id}/status`, { method: 'PUT', body: { status } })
+export const updateCampaignBudget = (id, budget) => request(`/campaigns/${id}/budget`, { method: 'PUT', body: { budget } })
 
-export async function getCampaignSummary(id) {
-  const res = await fetch(`${BASE}/campaigns/${id}/summary`);
-  if (!res.ok) throw new Error(`Budget Manager: ${res.status}`);
-  return res.json();
-}
+// Resumen global de las campañas activas: { activeCampaigns, totalBudget, totalSpent, totalAvailable, consumptionPercentage }
+export const getBudgetSummary = () => request('/campaigns/summary')
 
-export async function getCampaignExpenses(id) {
-  const res = await fetch(`${BASE}/campaigns/${id}/expenses`);
-  if (!res.ok) throw new Error(`Budget Manager: ${res.status}`);
-  return res.json();
-}
+// Resumen de una campaña: { campaignId, campaignName, client, totalBudget, spent, remaining, percentageUsed }
+export const getCampaignSummary = (id) => request(`/campaigns/${id}/summary`)
 
-export async function addCampaignExpense(id, expense) {
-  const res = await fetch(`${BASE}/campaigns/${id}/expenses`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(expense),
-  });
-  if (!res.ok) throw new Error(`Budget Manager: ${res.status}`);
-  return res.json();
-}
-
-export async function updateCampaignBudget(id, budget) {
-  const res = await fetch(`${BASE}/campaigns/${id}/budget`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ budget }),
-  });
-  if (!res.ok) throw new Error(`Budget Manager: ${res.status}`);
-  return res.json();
-}
+export const getCampaignExpenses = (id) => request(`/campaigns/${id}/expenses`)
+export const addCampaignExpense  = (id, expense) => request(`/campaigns/${id}/expenses`, { method: 'POST', body: expense })

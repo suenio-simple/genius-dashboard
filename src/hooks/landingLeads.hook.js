@@ -1,8 +1,5 @@
 import { useEffect, useState } from 'react'
-import { leads } from '../mocks/dashboardSummary'
-
-// TODO: reemplazar por getLandingLeads(landingId) de services/landingCrmApi al conectar la API
-const fetchLandingLeads = async (landingId) => leads.filter((lead) => lead.landingId === landingId)
+import { getLandingLeads } from '../services/landingCrmApi'
 
 const IDLE = { status: 'idle', leads: [], error: null }
 
@@ -19,7 +16,7 @@ export function useLandingLeads(landingId) {
     let cancelled = false
     setState({ status: 'loading', leads: [], error: null })
 
-    fetchLandingLeads(landingId)
+    getLandingLeads(landingId)
       .then((result) => {
         if (cancelled) return
         const newestFirst = [...result].sort((a, b) => b.createdAt.localeCompare(a.createdAt))

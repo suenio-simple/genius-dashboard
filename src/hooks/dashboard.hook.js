@@ -1,5 +1,6 @@
-import { useMemo } from 'react'
-import { campaigns, campaignsSummary, landings, leadsSummary } from '../mocks/dashboardSummary'
+import { useCallback, useEffect, useState } from 'react'
+import { getBudgetSummary, getCampaigns } from '../services/budgetManagerApi'
+import { getLandings, getLeadsSummary } from '../services/landingCrmApi'
 
 // Umbrales de las alertas de pacing y presupuesto
 const NEAR_LIMIT_PERCENT = 90 // % consumido a partir del cual avisamos que se está por agotar
@@ -41,13 +42,10 @@ function getAlert({ spent, budget, percentageUsed }, timePercent) {
   return null
 }
 
-// Une el listado de campañas con su resumen de presupuesto y calcula período y diagnóstico
-function buildCampaignDetails(today) {
-  const summaryById = new Map(campaignsSummary.map((s) => [s.campaignId, s]))
-
+// Calcula período y diagnóstico de cada campaña
+function buildCampaignDetails(campaigns, today) {
   return campaigns.map((campaign) => {
-    const summary        = summaryById.get(campaign.id)
-    const percentageUsed = summary?.percentageUsed ?? (campaign.budget > 0 ? (campaign.spent / campaign.budget) * 100 : 0)
+    const percentageUsed = campaign.budget > 0 ? (campaign.spent / campaign.budget) * 100 : 0
     const period         = getPeriod(campaign.startDate, campaign.endDate, today)
     const detail         = { ...campaign, percentageUsed, available: campaign.budget - campaign.spent, period }
 
@@ -75,29 +73,99 @@ function buildAlerts(campaignDetails) {
     .sort((a, b) => ALERT_PRIORITY.indexOf(a.type) - ALERT_PRIORITY.indexOf(b.type))
 }
 
-export function useDashboard() {
-  return useMemo(() => {
-    const totalBudget         = sumBy(campaignsSummary, 'totalBudget')
-    const totalSpent          = sumBy(campaignsSummary, 'spent')
-    const totalAvailable      = totalBudget - totalSpent
-    const activeCampaignList  = campaigns.filter((c) => c.status === 'active')
-    const registeredCampaigns = campaigns.length
-    const totalLeads          = sumBy(leadsSummary, 'leadCount')
-    const campaignDetails     = buildCampaignDetails(Date.now())
+function buildBudgetData(campaigns, summary) {
+  const campaignDetails = buildCampaignDetails(campaigns, Date.now())
 
-    return {
-      currency: 'ARS',
-      totalBudget,
-      totalSpent,
-      totalAvailable,
-      spentPercent: totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0,
-      activeCampaigns: activeCampaignList.length,
-      activeCampaignList,
-      activeLandingList: landings.filter((l) => l.status === 'active'),
-      registeredCampaigns,
-      totalLeads,
-      alerts: buildAlerts(campaignDetails),
-      campaignDetailsById: new Map(campaignDetails.map((c) => [c.id, c])),
+  return {
+    totalBudget: summary.totalBudget,
+    totalSpent: summary.totalSpent,
+    totalAvailable: summary.totalAvailable,
+    spentPercent: summary.consumptionPercentage,
+    activeCampaigns: summary.activeCampaigns,
+    activeCampaignList: campaigns.filter((c) => c.status === 'active'),
+    registeredCampaigns: campaigns.length,
+    alerts: buildAlerts(campaignDetails),
+    campaignDetailsById: new Map(campaignDetails.map((c) => [c.id, c])),
+  }
+}
+
+// GET /landings devuelve leadCount en 0: el conteo real se toma del resumen de leads
+function buildCrmData(landings, leadsSummary) {
+  const leadCountById = new Map(leadsSummary.map((l) => [l.id, l.leadCount]))
+
+  return {
+    totalLeads: sumBy(leadsSummary, 'leadCount'),
+    activeLandingList: landings
+      .filter((l) => l.status === 'active')
+      .map((l) => ({ ...l, leadCount: leadCountById.get(l.id) ?? 0 })),
+  }
+}
+
+const EMPTY_BUDGET = {
+  totalBudget: null,
+  totalSpent: null,
+  totalAvailable: null,
+  spentPercent: null,
+  activeCampaigns: null,
+  activeCampaignList: [],
+  registeredCampaigns: null,
+  alerts: [],
+  campaignDetailsById: new Map(),
+}
+
+const EMPTY_CRM = { totalLeads: null, activeLandingList: [] }
+
+// Cada API se resuelve por separado: si una se cae, sus métricas quedan en null y el resto se muestra igual
+export function useDashboard() {
+  const [state, setState] = useState({
+    loading: true,
+    budget: EMPTY_BUDGET,
+    crm: EMPTY_CRM,
+    budgetError: null,
+    crmError: null,
+    updatedAt: null,
+  })
+  const [reloadKey, setReloadKey] = useState(0)
+  const reload = useCallback(() => setReloadKey((key) => key + 1), [])
+
+  useEffect(() => {
+    let cancelled = false
+    setState((prev) => ({ ...prev, loading: true }))
+
+    Promise.all([
+      Promise.all([getCampaigns(), getBudgetSummary()]).then(
+        ([campaigns, summary]) => ({ data: buildBudgetData(campaigns, summary), error: null }),
+        (error) => ({ data: EMPTY_BUDGET, error }),
+      ),
+      Promise.all([getLandings(), getLeadsSummary()]).then(
+        ([landings, leadsSummary]) => ({ data: buildCrmData(landings, leadsSummary), error: null }),
+        (error) => ({ data: EMPTY_CRM, error }),
+      ),
+    ]).then(([budget, crm]) => {
+      if (cancelled) return
+      setState({
+        loading: false,
+        budget: budget.data,
+        crm: crm.data,
+        budgetError: budget.error,
+        crmError: crm.error,
+        updatedAt: new Date(),
+      })
+    })
+
+    return () => {
+      cancelled = true
     }
-  }, [])
+  }, [reloadKey])
+
+  return {
+    currency: 'ARS',
+    ...state.budget,
+    ...state.crm,
+    loading: state.loading,
+    budgetError: state.budgetError,
+    crmError: state.crmError,
+    updatedAt: state.updatedAt,
+    reload,
+  }
 }
