@@ -89,15 +89,24 @@ function buildBudgetData(campaigns, summary) {
   }
 }
 
+// Orden en el que se listan las landings según su estado
+const LANDING_STATUS_ORDER = ['active', 'paused', 'draft', 'closed']
+
+const landingStatusRank = (status) => {
+  const rank = LANDING_STATUS_ORDER.indexOf(status)
+  return rank === -1 ? LANDING_STATUS_ORDER.length : rank
+}
+
 // GET /landings devuelve leadCount en 0: el conteo real se toma del resumen de leads
 function buildCrmData(landings, leadsSummary) {
   const leadCountById = new Map(leadsSummary.map((l) => [l.id, l.leadCount]))
 
   return {
     totalLeads: sumBy(leadsSummary, 'leadCount'),
-    activeLandingList: landings
-      .filter((l) => l.status === 'active')
-      .map((l) => ({ ...l, leadCount: leadCountById.get(l.id) ?? 0 })),
+    activeLandings: landings.filter((l) => l.status === 'active').length,
+    landingList: landings
+      .map((l) => ({ ...l, leadCount: leadCountById.get(l.id) ?? 0 }))
+      .sort((a, b) => landingStatusRank(a.status) - landingStatusRank(b.status)),
   }
 }
 
@@ -113,7 +122,7 @@ const EMPTY_BUDGET = {
   campaignDetailsById: new Map(),
 }
 
-const EMPTY_CRM = { totalLeads: null, activeLandingList: [] }
+const EMPTY_CRM = { totalLeads: null, activeLandings: 0, landingList: [] }
 
 // Cada API se resuelve por separado: si una se cae, sus métricas quedan en null y el resto se muestra igual
 export function useDashboard() {

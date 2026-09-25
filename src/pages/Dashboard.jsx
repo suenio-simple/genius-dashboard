@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import ActiveCampaigns from '../components/ActiveCampaigns'
-import ActiveLandings from '../components/ActiveLandings'
 import AttentionAlerts from '../components/AttentionAlerts'
 import CampaignDetailModal from '../components/CampaignDetailModal'
 import KpiCard from '../components/KpiCard'
 import LandingLeadsModal from '../components/LandingLeadsModal'
+import LandingsPanel from '../components/LandingsPanel'
 import { useDashboard } from '../hooks/dashboard.hook'
 import { formatMoney, formatNumber, formatPercent } from '../utils/format'
 
@@ -22,7 +22,8 @@ export default function Dashboard() {
     spentPercent,
     activeCampaigns,
     activeCampaignList,
-    activeLandingList,
+    activeLandings,
+    landingList,
     registeredCampaigns,
     totalLeads,
     alerts,
@@ -104,8 +105,9 @@ export default function Dashboard() {
           campaigns={activeCampaignList}
           onSelect={(campaign) => setSelectedCampaignId(campaign.id)}
         />
-        <ActiveLandings
-          landings={activeLandingList}
+        <LandingsPanel
+          landings={landingList}
+          activeCount={activeLandings}
           onSelect={(landing) => setSelectedLandingId(landing.id)}
         />
       </div>
@@ -116,7 +118,7 @@ export default function Dashboard() {
       />
 
       <LandingLeadsModal
-        landing={activeLandingList.find((l) => l.id === selectedLandingId) ?? null}
+        landing={landingList.find((l) => l.id === selectedLandingId) ?? null}
         onClose={() => setSelectedLandingId(null)}
       />
 

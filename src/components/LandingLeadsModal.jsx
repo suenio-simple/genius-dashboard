@@ -3,7 +3,7 @@ import { useLandingLeads } from '../hooks/landingLeads.hook'
 import { formatDate, formatDateTime, formatNumber } from '../utils/format'
 import { Modal, StatusPill, TagBadge } from './Modal'
 
-const STATUS_STYLES = {
+export const LANDING_STATUS_STYLES = {
   active:   { label: 'Activa',   pill: 'bg-emerald-100 text-emerald-800', dot: 'bg-emerald-500' },
   paused:   { label: 'Pausada',  pill: 'bg-amber-100 text-amber-800',     dot: 'bg-amber-500' },
   draft:    { label: 'Borrador', pill: 'bg-slate-100 text-slate-600',     dot: 'bg-slate-400' },
@@ -55,7 +55,7 @@ function LeadsList({ status, leads }) {
 
 export default function LandingLeadsModal({ landing, onClose }) {
   const { status: leadsStatus, leads } = useLandingLeads(landing?.id ?? null)
-  const status = landing && (STATUS_STYLES[landing.status] ?? STATUS_STYLES.draft)
+  const status = landing && (LANDING_STATUS_STYLES[landing.status] ?? LANDING_STATUS_STYLES.draft)
   const fields = landing?.fields ?? {}
 
   return (
